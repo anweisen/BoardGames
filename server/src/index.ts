@@ -4,7 +4,6 @@ import expressWs from "express-ws";
 const { app, getWss, applyTo } = expressWs(express());
 
 app.ws("/gateway/:id", (ws, req) => {
-  
 })
 
 const port = 5000; // TODO

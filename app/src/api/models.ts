@@ -4,7 +4,16 @@ export interface UnoCardItem {
 }
 
 export enum UnoCardType {
-  NUMBER,
+  N_0,
+  N_1,
+  N_2,
+  N_3,
+  N_4,
+  N_5,
+  N_6,
+  N_7,
+  N_8,
+  N_9,
   REVERSE,
   SKIP,
   DRAW,

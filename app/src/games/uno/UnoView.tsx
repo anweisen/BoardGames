@@ -18,7 +18,7 @@ export default () => {
     usedCards.push(card)
     setUsedCards(usedCards)
   }
-//penis (ich liebe dich)
+
   return (
     <div className={"UnoView"}>
       <UnoUsedCards cards={usedCards}/>
