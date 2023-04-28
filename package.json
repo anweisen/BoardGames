@@ -1,0 +1,11 @@
+{
+  "name": "BoardGames",
+  "version": "1.0.0",
+  "author":"anweisen",
+  "license":"ISC",
+  "workspaces": [
+    "app",
+    "core",
+    "server"
+  ]
+}

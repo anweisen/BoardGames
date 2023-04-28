@@ -9,7 +9,8 @@
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "sass": "^1.62.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "core": "../core"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,7 +42,7 @@
     "@types/react-dom": "^18.2.1",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
-    "typescript": "^4.9.5",
-    "@types/jest": "^27.4.1"
+    "@types/jest": "^27.4.1",
+    "typescript": "^4.9.5"
   }
 }
