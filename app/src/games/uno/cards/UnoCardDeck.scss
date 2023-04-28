@@ -1,0 +1,39 @@
+.UnoCardDeck {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+
+  overflow: hidden;
+  //width: 100dvw;
+
+  //&:hover .UnoCard:not(:hover) {
+  //  filter: brightness(0.95) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+  //}
+
+  .UnoCard {
+    transition: margin-left 0.15s cubic-bezier(0, 0.5, 0.75, 1),
+    transform 0.1s ease-in-out,
+    filter 0.1s ease-in-out;
+
+    position: relative;
+    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+
+    svg {
+      width: #{250px};
+      height: #{350px};
+    }
+
+    &:not(:first-child) {
+      margin-left: -200px;
+    }
+
+    &:hover + .UnoCard {
+      margin-left: -50px;
+    }
+
+    &:hover {
+      transform: translateY(-10px) rotate(0.75deg);
+      filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
+    }
+  }
+}
