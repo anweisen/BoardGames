@@ -1,45 +1,40 @@
 import express from "express";
-import * as ws from "ws";
-import {findLobby, joinLobby, validateName} from "../lobby/controller";
-import {Lobby, LobbyId} from "../lobby/models";
+import {GameType, RefuseReason, SocketMessageType} from "@board-games/core";
+import {createLobby, findLobby, joinLobby, sendPacket, validatePlayerName} from "../lobby/controller";
+import {LobbyId} from "../lobby/models";
 
 const router = express.Router();
 
 router.ws("/create", (ws, req) => {
+  // TODO checks
+
+  const type = GameType.UNO;
+  const lobbyName = "Lobby";
+  const playerName = "name";
+  const password = undefined;
+  createLobby(type, lobbyName, playerName, password, ws);
 });
 
-router.ws("/join/:id", (ws, req) => {
+router.ws("/join/:id", (socket, req) => {
   const id: LobbyId = req.params.id;
   const lobby = findLobby(id);
 
   if (!lobby) {
-    return ws.terminate();
+    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.INVALID_LOBBY});
+    return socket.terminate();
   }
   if (lobby.password && lobby.password != req.query.pw) {
-    return ws.terminate();
+    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.INVALID_PASSWORD});
+    return socket.terminate();
   }
 
   const name = req.query.name as string;
-  if (!name || !validateName(name, lobby)) {
-    return ws.terminate();
+  if (!name || !validatePlayerName(name, lobby)) {
+    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.INVALID_NAME});
+    return socket.terminate();
   }
 
-  joinLobby(lobby, name, ws);
+  joinLobby(lobby, name, socket);
 });
-
-const setupConnection = (ws: ws, lobby: Lobby) => {
-  ws.on("open", () => {
-
-  });
-  ws.on("message", (data, isBinary) => {
-
-  });
-  ws.on("close", (code, reason) => {
-
-  });
-  ws.on("error", err => {
-
-  });
-};
 
 export default router;

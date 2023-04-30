@@ -1,9 +1,6 @@
 import * as ws from "ws";
 import {Game} from "./logic/game";
-
-export enum GameType {
-  UNO,
-}
+import {GameType} from "@board-games/core";
 
 export type LobbyId = string;
 
@@ -45,5 +42,5 @@ export const randomLobbyId = (): LobbyId => {
   return result;
 };
 export const randomPlayerId = (): PlayerId => {
-  return Math.floor(Math.random() * 100000).toString(10);
+  return Math.floor(Math.random() * 100000).toString()
 };

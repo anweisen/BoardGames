@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {MdPublic} from "react-icons/md";
+import {MdOutlineDangerous, MdPublic} from "react-icons/md";
 import {LobbyItem} from "@board-games/core";
 import "./Overview.scss";
 
 export default () => {
-  const reloadTime = 5;
+  const reloadTime = 3;
   const [reload, setReload] = useState(0);
   const [lobbies, setLobbies] = useState<LobbyItem[]>();
 
@@ -32,7 +32,7 @@ export default () => {
         <GameCard/>
       </Category>
       <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>}>
-        {lobbies ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) : <></>}
+        {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) : <div className={"Empty"}><MdOutlineDangerous/><p></p></div>}
       </Category>
     </div>
   );

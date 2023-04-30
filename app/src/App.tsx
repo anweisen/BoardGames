@@ -26,7 +26,7 @@ const LobbyContext = ({socket, setSocket}: { socket: WebSocket | undefined, setS
       socket = new WebSocket(`ws://localhost:5000/gateway/join/${params.id}?name=test`);
       socket.onmessage = event => {
         setConnectionStatus("Received");
-        console.log("msg", event.data);
+        console.log(event.data);
       };
       socket.onopen = event => {
         setConnectionStatus("Connected");
@@ -47,3 +47,4 @@ const LobbyContext = ({socket, setSocket}: { socket: WebSocket | undefined, setS
     </div>
   );
 };
+

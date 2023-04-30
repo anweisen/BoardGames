@@ -3,6 +3,11 @@ import expressWs from "express-ws";
 
 const {app, getWss, applyTo} = expressWs(express());
 
+app.use((req, res, next) => {
+  console.log(req.method, req.path);
+  next()
+})
+
 import cors from "./routes/cors";
 app.use(cors)
 

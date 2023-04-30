@@ -71,13 +71,19 @@
 					grid-area: b;
 				}
 
-				animation: spawn 550ms cubic-bezier(.4, .75, .64, .99);
+				animation: spawn .45s cubic-bezier(.4, .75, .64, .99);
 
 				@keyframes spawn {
 					from {
 						transform: translateY(-15px);
 						opacity: 0.1;
 					}
+				}
+
+				transition: padding .25s ease, transform .4s ease;
+				&:hover {
+					padding: 10px 30px;
+					//transform: translateY(1px);
 				}
 			}
 		}
