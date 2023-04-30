@@ -1,11 +1,14 @@
 {
-  "name": "BoardGames",
   "version": "1.0.0",
-  "author":"anweisen",
-  "license":"ISC",
+  "author": "anweisen",
+  "license": "ISC",
   "workspaces": [
     "app",
     "core",
     "server"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^18.16.2",
+    "typescript": "^5.0.4"
+  }
 }

@@ -1,16 +1,19 @@
 {
-  "name": "app",
+  "name": "@board-games/app",
   "version": "0.1.0",
-  "private": true,
+  "author": "anweisen",
+  "license": "ISC",
+  "main": "src/index.tsx",
   "dependencies": {
+    "@board-games/core": "../core",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "sass": "^1.62.1",
-    "web-vitals": "^2.1.4",
-    "core": "../core"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

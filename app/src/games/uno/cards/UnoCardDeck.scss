@@ -18,17 +18,20 @@
     position: relative;
     filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
 
-    svg {
-      width: #{250px};
-      height: #{350px};
-    }
+	  $width: 10dvw;
+	  width: $width;
+	  padding-top: 25px; // extra space when highlighting cards to the top
+	  svg {
+		  width: 100%;
+		  height: auto;
+	  }
 
     &:not(:first-child) {
-      margin-left: -200px;
+      margin-left: -$width*.65; // hide 65%
     }
 
     &:hover + .UnoCard {
-      margin-left: -50px;
+      margin-left: -$width*.35; // hide 35%
     }
 
     &:hover {

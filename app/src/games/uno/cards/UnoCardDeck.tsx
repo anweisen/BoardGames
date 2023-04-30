@@ -1,6 +1,6 @@
-import "./UnoCardDeck.scss"
+import {UnoCardItem} from "@board-games/core";
 import UnoCard from "./UnoCard";
-import {UnoCardItem} from "../../../api/models";
+import "./UnoCardDeck.scss";
 
 export default ({cards, useCard}: { cards: UnoCardItem[], useCard: (index: number) => void }) => {
   return (
@@ -9,5 +9,5 @@ export default ({cards, useCard}: { cards: UnoCardItem[], useCard: (index: numbe
         <UnoCard key={index} card={card} handleClick={() => useCard(index)}/>
       ))}
     </div>
-  )
+  );
 }

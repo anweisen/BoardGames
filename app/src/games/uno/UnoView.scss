@@ -8,5 +8,10 @@
 }
 
 .UnoView {
-  
+  user-select: none;
+
+	width: 100dvw;
+	height: 100dvh;
+	display: grid;
+	place-items: center;
 }

@@ -1,4 +1,4 @@
-import {UnoCardItem} from "../../../api/models";
+import {UnoCardItem} from "@board-games/core";
 import UnoCard from "./UnoCard";
 
 export default ({cards}: { cards: UnoCardItem[] }) => {
@@ -8,5 +8,5 @@ export default ({cards}: { cards: UnoCardItem[] }) => {
         <UnoCard key={index} card={card}/>
       ))}
     </div>
-  )
+  );
 }
