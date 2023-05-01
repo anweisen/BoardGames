@@ -29,6 +29,10 @@ export abstract class GameBase implements Game {
     }
   }
 
+  sendPacket(player: PlayerId, type: SocketMessageType, data: object): void {
+    sendPacket(this.retrieveSocket(player), type, data);
+  }
+
   retrieveSocket(playerId: PlayerId): ws {
     return this.getLobby().participants[playerId].socket;
   }

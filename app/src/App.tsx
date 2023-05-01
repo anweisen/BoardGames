@@ -63,7 +63,7 @@ const LobbyContext = () => {
     socket.onmessage = event => {
       const text = event.data.toString();
       const json: SocketMessage = JSON.parse(text);
-      console.log(text);
+      console.log(json);
 
       const handler = handlerRef.current[json.t];
       if (handler) handler(json.t, json.d);
@@ -93,10 +93,11 @@ const LobbyContext = () => {
   return (
     <div style={{display: "grid", placeItems: "center", height: "100%", color: "white"}}>
       {refused ? <LobbyRefused reason={refused.reason}/> :
-        (!initPayload || !connectionRef.current ? <LobbyConnecting/> :
-          (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
-              (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef}/>)
-          ))
+        (!connectionRef.current || !socket ? <>LOST CON</> :
+          (!initPayload ? <LobbyConnecting/> :
+            (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
+                (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef}/>)
+            )))
       }
     </div>
   );

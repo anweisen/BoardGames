@@ -39,5 +39,18 @@
       transform: translateY(-10px) rotate(0.75deg);
       filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
     }
+
+	  &.Fade {
+		  animation: fade .25s ease-out forwards;
+	  }
+	  @keyframes fade {
+		  50% {
+			  opacity: 1;
+		  }
+		  to {
+			  transform: translateY(-65px);
+			  opacity: 0;
+		  }
+	  }
   }
 }

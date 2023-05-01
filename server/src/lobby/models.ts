@@ -1,6 +1,6 @@
 import * as ws from "ws";
-import {Game} from "./logic/game";
 import {GameType} from "@board-games/core";
+import {Game} from "./logic/game";
 
 export type LobbyId = string;
 
@@ -34,14 +34,12 @@ export enum ParticipantRole {
   NONE,
 }
 
-const lobbyIdChars = "abcdefghijklmnopqrstzvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-export const randomLobbyId = (): LobbyId => {
+export const randomFrom = (chars: string, length: number) => {
   let result = "";
   for (let i = 0; i < 5; i++) {
-    result += lobbyIdChars.charAt(Math.floor(Math.random() * lobbyIdChars.length));
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
-};
-export const randomPlayerId = (): PlayerId => {
-  return Math.floor(Math.random() * 100000).toString()
-};
+}
+export const randomLobbyId = (): LobbyId => randomFrom("abcdefghijklmnopqrstzvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5)
+export const randomPlayerId = (): PlayerId => randomFrom("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5);

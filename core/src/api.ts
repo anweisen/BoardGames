@@ -11,6 +11,9 @@ export enum SocketMessageType {
   // both ways
   // CHANGE_LOBBY_NAME = "CHANGE_LOBBY_NAME",
   // CHANGE_PLAYER_NAME = "CHANGE_PLAYER_NAME",
+  UNO_USE = "UNO_USE",
+  UNO_DRAW = "UNO_DRAW",
+  UNO_PICK = "UNO_PICK",
 
   // client to server
   REQUEST_START = "REQUEST_START",
