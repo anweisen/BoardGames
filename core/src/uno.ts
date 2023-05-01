@@ -2,7 +2,7 @@ export interface UnoCardItem {
   type: UnoCardType;
   color: UnoColorType;
 }
-export declare enum UnoCardType {
+export enum UnoCardType {
   N_0 = 0,
   N_1 = 1,
   N_2 = 2,
@@ -19,7 +19,7 @@ export declare enum UnoCardType {
   PICK = 13,
   DRAW_PICK = 14
 }
-export declare enum UnoColorType {
+export enum UnoColorType {
   BLACK = 0,
   GREEN = 1,
   YELLOW = 2,

@@ -5,14 +5,10 @@ import {LobbyId} from "../lobby/models";
 
 const router = express.Router();
 
-router.ws("/create", (ws, req) => {
-  // TODO checks
-
-  const type = GameType.UNO;
-  const lobbyName = "Lobby";
-  const playerName = "test";
-  const password = undefined;
-  createLobby(type, lobbyName, playerName, password, ws);
+router.post("/create", (req, res) => {
+  // @ts-ignore
+  const lobbyId = createLobby(GameType.UNO, undefined, undefined);
+  res.json({id: lobbyId});
 });
 
 router.ws("/join/:id", (socket, req) => {
@@ -20,11 +16,15 @@ router.ws("/join/:id", (socket, req) => {
   const lobby = findLobby(id);
 
   if (!lobby) {
-    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.INVALID_LOBBY});
+    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.UNKNOWN_LOBBY});
     return socket.terminate();
   }
   if (lobby.password && lobby.password != req.query.pw) {
     sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.INVALID_PASSWORD});
+    return socket.terminate();
+  }
+  if (lobby.game.ingame) {
+    sendPacket(socket, SocketMessageType.REFUSE_LOBBY, {reason: RefuseReason.ALREADY_INGAME});
     return socket.terminate();
   }
 

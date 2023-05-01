@@ -11,6 +11,7 @@ export enum LobbyState {
 
 export interface Lobby {
   id: LobbyId,
+  birth: number,
   type: GameType,
   name: string,
   password: string | undefined,

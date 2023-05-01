@@ -1,14 +1,17 @@
-import {useEffect, useState} from "react";
-import {UnoCardItem, UnoCardType, UnoColorType} from "@board-games/core";
+import {MutableRefObject, useState} from "react";
+import {SocketMessageType, UnoCardItem, UnoCardType, UnoColorType} from "@board-games/core";
 import UnoCardDeck from "./cards/UnoCardDeck";
+import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";
 
-export default () => {
-  const card: UnoCardItem = {color: UnoColorType.BLUE, type: UnoCardType.SKIP};
-
+export default ({connection, handler}: { connection: MutableRefObject<Connection>, handler: MutableRefObject<SocketHandlers> }) => {
   const [usedCards, setUsedCards] = useState<UnoCardItem[]>([]);
-  const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([card, card, card, card, card]);
-  const [ws, setWs] = useState<WebSocket>()
+  const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
+
+  handler.current[SocketMessageType.INIT_GAME] = (type, data: any) => {
+    console.log("Hop");
+  }
+  console.log("!");
 
   const useCard = (index: number) => {
   };
@@ -17,7 +20,6 @@ export default () => {
     <div className={"UnoView"}>
       {/*<UnoUsedCards cards={usedCards}/>*/}
       <UnoCardDeck cards={ownedCards} useCard={useCard}/>
-      {ws?.readyState}
     </div>
   );
 }

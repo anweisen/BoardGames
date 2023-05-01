@@ -31,22 +31,40 @@ const findParticipantByName = (lobby: Lobby, name: string): Participant | undefi
 // pre-checks required
 export const joinLobby = (lobby: Lobby, playerName: string, socket: ws) => {
   const playerId: PlayerId = randomPlayerId();
-  lobby.participants[playerId] = {id: playerId, name: playerName, role: ParticipantRole.NONE, socket: socket};
+  lobby.participants[playerId] = {
+    id: playerId,
+    name: playerName,
+    role: Object.keys(lobby.participants).length === 0 ? ParticipantRole.ADMIN : ParticipantRole.NONE,
+    socket: socket
+  };
 
   setupConnection(socket, lobby, playerId);
 };
 
 // pre-checks required
-export const createLobby = (type: GameType, lobbyName: string, playerName: string, password: string | undefined, socket: ws) => {
-  const playerId: PlayerId = randomPlayerId();
+export const createLobby = (type: GameType, lobbyName: string, password: string | undefined): LobbyId => {
   const participants: Record<PlayerId, Participant> = {};
-  participants[playerId] = {id: playerId, name: playerName, role: ParticipantRole.ADMIN, socket: socket};
 
   const lobbyId: LobbyId = randomLobbyId();
-  const lobby: Lobby = {id: lobbyId, type: type, name: lobbyName || lobbyId, password: password, state: LobbyState.LOBBY, participants, game: initGameInstance(type, lobbyId)};
+  const lobby: Lobby = {
+    id: lobbyId,
+    birth: Date.now(),
+    type: type,
+    name: lobbyName || lobbyId,
+    password: password,
+    state: LobbyState.LOBBY,
+    participants,
+    game: initGameInstance(type, lobbyId)
+  };
   lobbies.set(lobbyId, lobby);
 
-  setupConnection(socket, lobby, playerId);
+  setTimeout(() => {
+    if (!lobbies.has(lobbyId)) return;
+    const current = lobbies.get(lobbyId) as Lobby;
+    checkLobbyDeletion(current);
+  }, 5000);
+
+  return lobbyId
 };
 
 const initGameInstance = (type: GameType, lobbyId: LobbyId): Game => {
@@ -60,6 +78,7 @@ const initGameInstance = (type: GameType, lobbyId: LobbyId): Game => {
 
 const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
   socket.on("open", () => {
+    // resume
   });
   socket.on("message", (data, isBinary) => {
     const text = data.toString();
@@ -73,13 +92,10 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
     }
   });
   socket.on("close", (code, reason) => {
-    const current = lobbies.get(lobby.id) as Lobby
-    delete current?.participants[playerId]
-    lobby.game.handleClose(playerId)
-    if (Object.entries(current.participants).length === 0) {
-      lobbies.delete(lobby.id)
-      console.log(`| removed lobby ${lobby.id}`);
-    }
+    const current = lobbies.get(lobby.id) as Lobby;
+    delete current?.participants[playerId];
+    lobby.game.handleClose(playerId);
+    checkLobbyDeletion(current);
   });
   socket.on("error", err => {
   });
@@ -94,7 +110,15 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
   });
 };
 
+const checkLobbyDeletion = (lobby: Lobby) => {
+  if (Object.entries(lobby.participants).length === 0) {
+    lobbies.delete(lobby.id);
+    console.log(`| removed lobby ${lobby.id}`);
+  }
+};
+
 export const sendPacket = (socket: ws, type: SocketMessageType, data: object) => {
   const message: SocketMessage = {t: type, d: data};
   socket.send(JSON.stringify(message));
+  console.log("<-", JSON.stringify(message));
 };

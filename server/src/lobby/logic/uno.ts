@@ -11,12 +11,15 @@ export class UnoGame extends GameBase {
   handleMessage(type: SocketMessageType, data: object, player: PlayerId): void {
     switch (type) {
       case SocketMessageType.REQUEST_START:
-        this.broadcastPacket(SocketMessageType.START_GAME, {});
+        this.broadcastPacket(SocketMessageType.PREPARE_START, {});
+        this.ingame = true;
+        this.broadcastPacket(SocketMessageType.INIT_GAME, {}); // TODO delay?
         break;
     }
   }
 
   handleClose(playerId: PlayerId): void {
+    this.broadcastPacket(SocketMessageType.LEAVE, {id: playerId});
   }
 
   handleJoin(participant: Participant, socket: ws): void {

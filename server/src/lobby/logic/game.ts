@@ -4,6 +4,8 @@ import {Lobby, Participant, PlayerId} from "../models";
 import {sendPacket} from "../controller";
 
 export interface Game {
+  ingame: boolean;
+
   handleMessage(type: SocketMessageType, data: object, player: PlayerId): void;
 
   handleClose(playerId: PlayerId): void;
@@ -13,7 +15,8 @@ export interface Game {
 
 export abstract class GameBase implements Game {
 
-  readonly getLobby: () => Lobby;
+  public ingame = false;
+  protected readonly getLobby: () => Lobby;
 
   protected constructor(getLobby: () => Lobby) {
     this.getLobby = getLobby;
