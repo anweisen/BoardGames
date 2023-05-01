@@ -6,7 +6,7 @@ import {sendPacket} from "../controller";
 export interface Game {
   handleMessage(type: SocketMessageType, data: object, player: PlayerId): void;
 
-  handleClose(playerId: PlayerId, socket: ws): void;
+  handleClose(playerId: PlayerId): void;
 
   handleJoin(participant: Participant, socket: ws): void;
 }
@@ -32,7 +32,7 @@ export abstract class GameBase implements Game {
 
   abstract handleMessage(type: SocketMessageType, data: object, player: PlayerId): void
 
-  abstract handleClose(playerId: PlayerId, socket: ws): void;
+  abstract handleClose(playerId: PlayerId): void;
 
   abstract handleJoin(participant: Participant, socket: ws): void;
 }

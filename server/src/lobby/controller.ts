@@ -43,7 +43,6 @@ export const createLobby = (type: GameType, lobbyName: string, playerName: strin
   participants[playerId] = {id: playerId, name: playerName, role: ParticipantRole.ADMIN, socket: socket};
 
   const lobbyId: LobbyId = randomLobbyId();
-  // const lobbyId: LobbyId = "test"; // TODO
   const lobby: Lobby = {id: lobbyId, type: type, name: lobbyName || lobbyId, password: password, state: LobbyState.LOBBY, participants, game: initGameInstance(type, lobbyId)};
   lobbies.set(lobbyId, lobby);
 
@@ -74,6 +73,13 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
     }
   });
   socket.on("close", (code, reason) => {
+    const current = lobbies.get(lobby.id) as Lobby
+    delete current?.participants[playerId]
+    lobby.game.handleClose(playerId)
+    if (Object.entries(current.participants).length === 0) {
+      lobbies.delete(lobby.id)
+      console.log(`| removed lobby ${lobby.id}`);
+    }
   });
   socket.on("error", err => {
   });

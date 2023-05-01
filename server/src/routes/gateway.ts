@@ -10,7 +10,7 @@ router.ws("/create", (ws, req) => {
 
   const type = GameType.UNO;
   const lobbyName = "Lobby";
-  const playerName = "name";
+  const playerName = "test";
   const password = undefined;
   createLobby(type, lobbyName, playerName, password, ws);
 });

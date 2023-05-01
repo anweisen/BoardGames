@@ -38,3 +38,17 @@ export interface LobbyItem {
   game: GameType,
   players: number,
 }
+export interface InitLobbyPayload {
+  lobbyId: string;
+  lobbyName: string;
+  game: GameType;
+  playerId: string;
+  players: PlayerInfo[];
+}
+export interface PlayerInfo {
+  id: string;
+  name: string;
+}
+export interface RefuseLobbyPayload {
+  reason: RefuseReason
+}

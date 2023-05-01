@@ -16,7 +16,7 @@ export class UnoGame extends GameBase {
     }
   }
 
-  handleClose(playerId: PlayerId, socket: ws): void {
+  handleClose(playerId: PlayerId): void {
   }
 
   handleJoin(participant: Participant, socket: ws): void {
