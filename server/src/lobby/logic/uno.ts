@@ -82,11 +82,9 @@ export class UnoGame extends GameBase {
 
   useCard(cardIndex: number, card: UnoCardItem, player: PlayerId) {
     const cards = this.cards.get(player)!!;
-    console.log(cards);
     cards.splice(cardIndex, 1);
-    console.log(cards);
 
-    this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, card: card}, player);
+    this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, card: card, cards: cards.length}, player);
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards});
 
     switch (card.type) {
@@ -96,7 +94,7 @@ export class UnoGame extends GameBase {
 
       case UnoCardType.REVERSE:
         this.direction = this.direction === 0 ? 1 : 0;
-        if (this.cards.size === 1) {
+        if (this.cards.size === 2) {
           this.nextPlayerInDirection();
         }
         break;

@@ -43,6 +43,9 @@
 	  &.Locked {
 		  filter: brightness(65%);
 	  }
+	  &:not(.Locked) {
+		  margin-bottom: 20px;
+	  }
 
 	  &.Fade {
 		  animation: fade .25s ease-out forwards;

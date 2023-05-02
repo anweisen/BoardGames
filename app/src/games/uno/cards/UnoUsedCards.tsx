@@ -1,5 +1,6 @@
 import {UnoCardItem} from "@board-games/core";
 import UnoCard from "./UnoCard";
+import "./UnoUsedCards.scss";
 
 export default ({cards}: { cards: UnoCardItem[] }) => {
   return (

@@ -8,11 +8,14 @@ import "./UnoView.scss";
 export default ({connection, handler}: { connection: MutableRefObject<Connection>, handler: MutableRefObject<SocketHandlers> }) => {
   const [usedCards, setUsedCards] = useState<UnoCardItem[]>([]);
   const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
-  const [clickedCard, setClickedCard] = useState<{ time: number, index: number }>();
+  const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card: UnoCardItem }>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: InitUnoPayload) => {
     setOwnedCards(data.cards);
     setUsedCards([data.topCard]);
+  };
+  handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, card: UnoCardItem, cards: number }) => {
+    setUsedCards(prev => [data.card, ...prev]);
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     console.log("confirm", clickedCard);
@@ -21,6 +24,7 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
     setTimeout(() => {
       setClickedCard(undefined);
       setOwnedCards(data.cards);
+      setUsedCards(prev => [clickedCard!!.card, ...prev]);
     }, Math.max(450 - age, 0));
   };
   handler.current[SocketMessageType.UNO_REFUSE] = (type, data: { card: UnoCardItem }) => {
@@ -30,13 +34,13 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
   const useCard = (index: number) => {
     console.log("use", clickedCard);
     if (clickedCard !== undefined) return;
-    setClickedCard({time: Date.now(), index: index});
+    setClickedCard({time: Date.now(), index: index, card: ownedCards[index]});
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});
   };
   const canUse = (card: UnoCardItem) => {
     const top = usedCards[0];
     return canUseCard(top.color, top.type, card);
-  }
+  };
 
   return (
     <div className={"UnoView"}>

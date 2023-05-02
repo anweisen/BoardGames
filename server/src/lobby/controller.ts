@@ -8,12 +8,15 @@ const lobbies: Map<LobbyId, Lobby> = new Map<LobbyId, Lobby>();
 
 export const getLobbyItems = () => {
   const arr: LobbyItem[] = [];
-  lobbies.forEach(value => arr.push({
-    name: value.name,
-    id: value.id,
-    game: value.type,
-    players: Object.keys(value.participants).length
-  }));
+  for (let lobby of lobbies.values()) {
+    if (lobby.game.ingame) continue;
+    arr.push({
+      name: lobby.name,
+      id: lobby.id,
+      game: lobby.type,
+      players: Object.keys(lobby.participants).length
+    });
+  }
   return arr;
 };
 
@@ -64,7 +67,7 @@ export const createLobby = (type: GameType, lobbyName: string, password: string 
     checkLobbyDeletion(current);
   }, 5000);
 
-  return lobbyId
+  return lobbyId;
 };
 
 const initGameInstance = (type: GameType, lobbyId: LobbyId): Game => {
