@@ -43,3 +43,14 @@ export const randomFrom = (chars: string, length: number) => {
 }
 export const randomLobbyId = (): LobbyId => randomFrom("abcdefghijklmnopqrstzvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5)
 export const randomPlayerId = (): PlayerId => randomFrom("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 5);
+
+export const pickRandom = <T>(arr: T[]): T => {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+export const shuffle = (a: any[]) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}

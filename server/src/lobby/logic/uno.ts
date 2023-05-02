@@ -1,16 +1,7 @@
 import * as ws from "ws";
-import {
-  canUseCard,
-  SocketMessageType,
-  UnoCardItem,
-  UnoCardType,
-  UnoColoredTypes,
-  UnoColorType,
-  UnoDirection,
-  UnoSpecialTypes
-} from "@board-games/core";
+import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection, UnoSpecialTypes} from "@board-games/core";
 import {GameBase} from "./game";
-import {Lobby, Participant, PlayerId} from "../models";
+import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
 
 const createAllCards = () => {
   // every colored card x2 per color, every black card x4
@@ -31,7 +22,7 @@ const createAllCards = () => {
 };
 
 export class UnoGame extends GameBase {
-  static allCards = createAllCards();
+  static allCards = shuffle(createAllCards());
   private order: PlayerId[] = [];
   private cards: Map<PlayerId, UnoCardItem[]> = new Map();
   private direction: UnoDirection = UnoDirection.CLOCKWISE;
@@ -45,11 +36,12 @@ export class UnoGame extends GameBase {
   handleMessage(type: SocketMessageType, data: any, player: PlayerId): void {
     switch (type) {
       case SocketMessageType.REQUEST_START:
-        this.broadcastPacket(SocketMessageType.PREPARE_START, {});
         this.ingame = true;
-        this.shuffle(this.order);
-        this.distributeCards(7);
+        this.broadcastPacket(SocketMessageType.PREPARE_START, {});
+
+        shuffle(this.order);
         this.topCard = this.pickStartCard();
+        this.distributeCards(7);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {
@@ -63,23 +55,23 @@ export class UnoGame extends GameBase {
         }, 25);
         break;
       case SocketMessageType.UNO_USE:
-        if (player !== this.currentPlayer())
-          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
         if (!this.cards.has(player))
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
         const cardIndex = data.cardIndex as number;
         const card = (this.cards.get(player) as UnoCardItem[])[cardIndex];
 
+        if (player !== this.currentPlayer())
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
         if (!canUseCard(this.topCard!!.color, this.topCard!!.type, card))
-          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
 
-        this.useCard(card, player)
+        this.useCard(cardIndex, card, player);
         break;
     }
   }
 
   handleClose(playerId: PlayerId): void {
-    this.order.splice(this.order.indexOf(playerId));
+    this.order.splice(this.order.indexOf(playerId), 1);
     this.broadcastPacket(SocketMessageType.LEAVE, {id: playerId});
   }
 
@@ -88,9 +80,14 @@ export class UnoGame extends GameBase {
     this.broadcastPacket(SocketMessageType.JOIN, {id: participant.id, name: participant.name}, participant.id);
   }
 
-  useCard(card: UnoCardItem, player: PlayerId) {
+  useCard(cardIndex: number, card: UnoCardItem, player: PlayerId) {
+    const cards = this.cards.get(player)!!;
+    console.log(cards);
+    cards.splice(cardIndex, 1);
+    console.log(cards);
+
     this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, card: card}, player);
-    this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {card: card})
+    this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards});
 
     switch (card.type) {
       case UnoCardType.PICK:
@@ -100,7 +97,7 @@ export class UnoGame extends GameBase {
       case UnoCardType.REVERSE:
         this.direction = this.direction === 0 ? 1 : 0;
         if (this.cards.size === 1) {
-          this.nextPlayerInDirection()
+          this.nextPlayerInDirection();
         }
         break;
       case UnoCardType.SKIP:
@@ -114,32 +111,20 @@ export class UnoGame extends GameBase {
     for (let playerId of this.order) {
       const cards = [];
       for (let i = 0; i < amount; i++) {
-        cards.push(this.pickRandom(UnoGame.allCards));
+        cards.push(pickRandom(UnoGame.allCards));
       }
       this.cards.set(playerId, cards);
     }
   }
 
-
-  pickRandom<T>(arr: T[]): T {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
   pickStartCard(): UnoCardItem {
     while (true) {
-      const card = this.pickRandom(UnoGame.allCards);
+      const card = pickRandom(UnoGame.allCards);
       if (card.color !== UnoColorType.BLACK && card.type <= UnoCardType.N_9)
         return card;
     }
   }
 
-  shuffle(a: any[]) {
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
 
   nextPlayerInDirection(): PlayerId {
     this.current++;

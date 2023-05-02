@@ -38,7 +38,7 @@ export enum UnoDirection {
 }
 
 export const canUseCard = (colorBefore: UnoColorType, cardBefore: UnoCardType, cardNow: UnoCardItem): boolean => {
-  return colorBefore === cardNow.color || cardBefore === cardNow.type;
+  return colorBefore === cardNow.color || cardBefore === cardNow.type || cardNow.color === UnoColorType.BLACK;
 };
 
 export interface InitUnoPayload {
