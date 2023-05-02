@@ -3,8 +3,7 @@ import {UnoCardCore} from "./UnoCard";
 import {useState} from "react";
 import "./UnoCardDeck.scss";
 
-export default ({cards, topCard, sendUseCardPacket}: { cards: UnoCardItem[], topCard: UnoCardItem, sendUseCardPacket: (index: number) => void }) => {
-  const [clicked, setClicked] = useState<number>();
+export default ({cards, topCard, clicked, sendUseCardPacket}: { cards: UnoCardItem[], topCard: UnoCardItem, clicked: number | undefined, sendUseCardPacket: (index: number) => void }) => {
   return (
     <div className={"UnoCardDeck"}>
       {cards.map((card, index) => (
