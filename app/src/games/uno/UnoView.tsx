@@ -19,13 +19,15 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     console.log("confirm", clickedCard);
-
     const age = Date.now() - clickedCard!!.time;
+
     setTimeout(() => {
-      setUsedCards(prev => [clickedCard!!.card, ...prev]);
+      setUsedCards(prev => [...prev, clickedCard!!.card]);
+    }, Math.max(250 - age, 0));
+    setTimeout(() => {
       setOwnedCards(data.cards);
       setClickedCard(undefined);
-    }, Math.max(450 - age, 0));
+    }, Math.max(500 - age, 0));
   };
   handler.current[SocketMessageType.UNO_REFUSE] = (type, data: { card: UnoCardItem }) => {
     setClickedCard(undefined);
@@ -38,7 +40,7 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});
   };
   const canUse = (card: UnoCardItem) => {
-    const top = usedCards[0];
+    const top = usedCards[usedCards.length - 1];
     return canUseCard(top.color, top.type, card);
   };
 

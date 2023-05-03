@@ -1,7 +1,33 @@
 .UnoUsedCards {
 	position: relative;
+	transform-style: preserve-3d;
+	perspective: 500px;
+	perspective-origin: 150*.5px -100px; // width=250px
 
 	.UnoCard {
-		//position: absolute;
+		position: absolute;
+		filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 1));
+
+		&:last-child {
+			animation: lay .7s cubic-bezier(.13,.69,.2,.75);
+		}
+
+		$rotateX: 90deg;
+		@for $i from 1 through 100 {
+			&:nth-child(#{$i}) {
+				transform: rotateX($rotateX) rotateZ(var(--rotate)) translateZ(#{5px*min($i - 1, 5)}) translateY(var(--offsetY));
+			}
+		}
+
+		@keyframes lay {
+			from {
+				opacity: 0;
+				transform: rotateX(70deg) rotateZ(var(--rotate)) translateZ(200px);
+			}
+			30% {
+				opacity: 1;
+			}
+		}
+
 	}
 }

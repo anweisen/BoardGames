@@ -12,7 +12,6 @@
 	//}
 
 	&.Waiting {
-
 	}
 
 	.UnoCard {
@@ -34,7 +33,7 @@
 		}
 
 		&:not(:first-child) {
-			margin-left: -$width*.50; // hide 50%
+			margin-left: -$width*.45; // hide 45%
 		}
 
 		&:hover + .UnoCard {

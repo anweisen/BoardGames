@@ -13,11 +13,11 @@ const createAllCards = () => {
       }
     }
   }
-  for (let i = 0; i < 4; i++) {
-    for (let type of UnoSpecialTypes) {
-      cards.push({type: type, color: UnoColorType.BLACK});
-    }
-  }
+  // for (let i = 0; i < 4; i++) {
+  //   for (let type of UnoSpecialTypes) {
+  //     cards.push({type: type, color: UnoColorType.BLACK});
+  //   }
+  // }
   return cards;
 };
 
