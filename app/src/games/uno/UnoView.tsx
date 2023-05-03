@@ -18,7 +18,6 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
     setUsedCards(prev => [data.card, ...prev]);
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
-    console.log("confirm", clickedCard);
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
@@ -34,7 +33,6 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
   };
 
   const useCard = (index: number) => {
-    console.log("use", clickedCard);
     if (clickedCard !== undefined) return;
     setClickedCard({time: Date.now(), index: index, card: ownedCards[index]});
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});

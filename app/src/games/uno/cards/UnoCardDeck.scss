@@ -7,14 +7,14 @@
 	overflow: hidden;
 	//width: 100dvw;
 
-	//&:hover .UnoCard:not(:hover) {
-	//  filter: brightness(0.95) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
-	//}
+	transform-style: preserve-3d;
+	perspective: 1000px;
 
 	&.Waiting {
 	}
 
 	.UnoCard {
+		transform: rotateX(5deg);
 		transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
 		margin-right 0.1s cubic-bezier(0, 0.5, 0.75, 1),
 		margin-bottom 0.1s cubic-bezier(0, 0.5, 0.75, 1),
@@ -41,7 +41,7 @@
 		}
 
 		&:hover {
-			transform: translateY(-$width*.08) rotate(1.5deg);
+			transform: translateY(-$width*.05) rotate(1.5deg);
 			filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
 		}
 
