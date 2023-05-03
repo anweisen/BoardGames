@@ -1,85 +1,102 @@
 .UnoCardDeck {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  padding: 10px;
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	padding: 10px;
 
-  overflow: hidden;
-  //width: 100dvw;
+	overflow: hidden;
+	//width: 100dvw;
 
-  //&:hover .UnoCard:not(:hover) {
-  //  filter: brightness(0.95) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
-  //}
+	//&:hover .UnoCard:not(:hover) {
+	//  filter: brightness(0.95) drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
+	//}
 
-  .UnoCard {
-    transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
-    margin-bottom 0.1s cubic-bezier(0, 0.5, 0.75, 1),
-    transform 0.1s ease-in-out,
-    filter 0.1s ease-in-out;
+	&.Waiting {
 
-    position: relative;
-    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
+	}
 
-    $width: 10dvw;
-    width: $width;
-    padding-top: 25px; // extra space when highlighting cards to the top
-    svg {
-      width: 100%;
-      height: auto;
-    }
+	.UnoCard {
+		transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
+		margin-right 0.1s cubic-bezier(0, 0.5, 0.75, 1),
+		margin-bottom 0.1s cubic-bezier(0, 0.5, 0.75, 1),
+		transform 0.1s ease-in-out,
+		filter 0.1s ease-in-out;
 
-    &:not(:first-child) {
-      margin-left: -$width*.50; // hide 50%
-    }
+		position: relative;
+		filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
 
-    &:hover + .UnoCard {
-      //margin-left: -$width*.35; // hide 35%
-    }
+		$width: 10dvw;
+		width: $width;
+		padding-top: 25px; // extra space when highlighting cards to the top
+		svg {
+			width: 100%;
+			height: auto;
+		}
 
-    &:hover {
-      transform: translateY(-$width*.08) rotate(1.5deg);
-      filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
-    }
+		&:not(:first-child) {
+			margin-left: -$width*.50; // hide 50%
+		}
 
-    &.Locked {
-      filter: brightness(65%);
-    }
+		&:hover + .UnoCard {
+			//margin-left: -$width*.35; // hide 35%
+		}
 
-    &:not(.Locked) {
-      margin-bottom: 20px;
-    }
+		&:hover {
+			transform: translateY(-$width*.08) rotate(1.5deg);
+			filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
+		}
 
-    &.Fade {
-      animation: fade .25s ease-out forwards;
-    }
+		&.Locked {
+			filter: brightness(70%);
+		}
 
-    &.Fade + .UnoCard {
-      animation: follow-left .25s .25s ease-out forwards;
-    }
+		&:not(.Locked) {
+			margin-bottom: 20px;
+		}
 
-    &:has(+ .Fade) {
-      animation: follow-right .25s .25s ease-out forwards;
-    }
+		&.Fade {
+			animation: fade .25s ease-out forwards;
+		}
 
-    @keyframes fade {
-      50% {
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-65px);
-        opacity: 0;
-      }
-    }
+		&.Fade + .UnoCard {
+			background: blue;
+			animation: follow-left .25s .25s ease-out forwards;
+		}
 
-    @keyframes follow-left {
-      to {
-        margin-left: -$width*.5;
-      }
-    }
-    @keyframes follow-right {
-      to {
-        margin-right: -$width*.5;
-      }
-    }
-  }
+		&:first-child.Fade + .UnoCard {
+			background: purple;
+			animation: follow-left-end .25s .25s ease-out forwards;
+		}
+
+		&:has(+ .Fade) {
+			background: red;
+			animation: follow-right .25s .25s ease-out forwards;
+		}
+
+		@keyframes fade {
+			50% {
+				opacity: 1;
+			}
+			to {
+				transform: translateY(-65px);
+				opacity: 0;
+			}
+		}
+
+		@keyframes follow-left {
+			to {
+				margin-left: -$width*.5;
+			}
+		}
+		@keyframes follow-left-end {
+			to {
+				margin-left: -$width;
+			}
+		}
+		@keyframes follow-right {
+			to {
+				margin-right: -$width*.5;
+			}
+		}
+	}
 }

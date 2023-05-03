@@ -36,6 +36,8 @@ export class UnoGame extends GameBase {
   handleMessage(type: SocketMessageType, data: any, player: PlayerId): void {
     switch (type) {
       case SocketMessageType.REQUEST_START:
+        if (this.ingame) return;
+
         this.ingame = true;
         this.broadcastPacket(SocketMessageType.PREPARE_START, {});
 

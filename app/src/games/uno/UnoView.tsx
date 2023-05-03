@@ -45,7 +45,7 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
   return (
     <div className={"UnoView"}>
       <UnoUsedCards cards={usedCards}/>
-      <UnoCardDeck cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard}/>
+      <UnoCardDeck cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
     </div>
   );
 };
