@@ -83,6 +83,7 @@ export class UnoGame extends GameBase {
   useCard(cardIndex: number, card: UnoCardItem, player: PlayerId) {
     const cards = this.cards.get(player)!!;
     cards.splice(cardIndex, 1);
+    this.topCard = card;
 
     this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, card: card, cards: cards.length}, player);
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards});

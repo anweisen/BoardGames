@@ -22,9 +22,9 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
 
     const age = Date.now() - clickedCard!!.time;
     setTimeout(() => {
-      setClickedCard(undefined);
-      setOwnedCards(data.cards);
       setUsedCards(prev => [clickedCard!!.card, ...prev]);
+      setOwnedCards(data.cards);
+      setClickedCard(undefined);
     }, Math.max(450 - age, 0));
   };
   handler.current[SocketMessageType.UNO_REFUSE] = (type, data: { card: UnoCardItem }) => {

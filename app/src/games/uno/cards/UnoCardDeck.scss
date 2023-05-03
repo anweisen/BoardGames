@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   position: relative;
-	padding: 10px;
+  padding: 10px;
 
   overflow: hidden;
   //width: 100dvw;
@@ -13,19 +13,20 @@
 
   .UnoCard {
     transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
+    margin-bottom 0.1s cubic-bezier(0, 0.5, 0.75, 1),
     transform 0.1s ease-in-out,
     filter 0.1s ease-in-out;
 
     position: relative;
     filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
 
-	  $width: 10dvw;
-	  width: $width;
-	  padding-top: 25px; // extra space when highlighting cards to the top
-	  svg {
-		  width: 100%;
-		  height: auto;
-	  }
+    $width: 10dvw;
+    width: $width;
+    padding-top: 25px; // extra space when highlighting cards to the top
+    svg {
+      width: 100%;
+      height: auto;
+    }
 
     &:not(:first-child) {
       margin-left: -$width*.50; // hide 50%
@@ -40,41 +41,45 @@
       filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
     }
 
-	  &.Locked {
-		  filter: brightness(65%);
-	  }
-	  &:not(.Locked) {
-		  margin-bottom: 20px;
-	  }
+    &.Locked {
+      filter: brightness(65%);
+    }
 
-	  &.Fade {
-		  animation: fade .25s ease-out forwards;
-	  }
-	  &.Fade + .UnoCard {
-		  animation: follow-left .25s .25s ease-out forwards;
-	  }
-	  &:has(+ .Fade) {
-		  animation: follow-right .25s .25s ease-out forwards;
-	  }
-	  @keyframes fade {
-		  50% {
-			  opacity: 1;
-		  }
-		  to {
-			  transform: translateY(-65px);
-			  opacity: 0;
-		  }
-	  }
+    &:not(.Locked) {
+      margin-bottom: 20px;
+    }
 
-	  @keyframes follow-left {
-		  to {
-		    margin-left: -$width*.5;
-		  }
-	  }
-	  @keyframes follow-right {
-		  to {
-		    margin-right: -$width*.5;
-		  }
-	  }
+    &.Fade {
+      animation: fade .25s ease-out forwards;
+    }
+
+    &.Fade + .UnoCard {
+      animation: follow-left .25s .25s ease-out forwards;
+    }
+
+    &:has(+ .Fade) {
+      animation: follow-right .25s .25s ease-out forwards;
+    }
+
+    @keyframes fade {
+      50% {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-65px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes follow-left {
+      to {
+        margin-left: -$width*.5;
+      }
+    }
+    @keyframes follow-right {
+      to {
+        margin-right: -$width*.5;
+      }
+    }
   }
 }
