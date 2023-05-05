@@ -1,0 +1,32 @@
+.UnoPlayerDisplay {
+	display: flex;
+
+	$cardWidth: 90px;
+
+	.Card {
+		width: $cardWidth;
+		height: auto;
+		margin-left: $cardWidth*-.75;
+
+		& {
+			animation: draw .5s ease backwards;
+			&.Init {
+				@for $i from 1 through 100 {
+					&:nth-child(#{$i}) {
+						animation-delay: $i*.25s;
+					}
+				}
+			}
+
+			@keyframes draw {
+				from {
+					transform: translateY(-$cardWidth*.5);
+					opacity: 0;
+				}
+				30% {
+					opacity: 1;
+				}
+			}
+		}
+	}
+}

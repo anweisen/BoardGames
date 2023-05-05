@@ -3,9 +3,8 @@
 	--uno-blue: #0956BF;
 	--uno-green: #379711;
 	--uno-yellow: #ECD407;
-	--uno-black: black;
+	--uno-black: #171614;
 	--uno-card-background: white;
-	//--uno-card-accent: black;
 }
 
 .UnoView {
@@ -13,15 +12,24 @@
 
 	width: 100dvw;
 	height: 100dvh;
+
 	display: grid;
 	place-items: center;
 	grid-template-columns: 10% auto 10%;
 
-	.UnoUsedCards {
+	.UnoPlayerDisplay {
+		grid-area: 1 / 2;
+	}
+
+	.UnoCardDeck {
 		grid-area: 2 / 2;
 	}
 
-	.UnoOwnedCards {
+	.UnoUsedCards {
 		grid-area: 3 / 2;
+	}
+
+	.UnoOwnedCards {
+		grid-area: 4 / 2;
 	}
 }

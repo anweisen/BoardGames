@@ -43,7 +43,7 @@ export class UnoGame extends GameBase {
 
         shuffle(this.order);
         this.topCard = this.pickStartCard();
-        this.distributeCards(7);
+        this.distributeCards(17);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {

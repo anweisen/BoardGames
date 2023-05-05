@@ -1,7 +1,9 @@
 import {MutableRefObject, useState} from "react";
 import {canUseCard, InitUnoPayload, SocketMessageType, UnoCardItem} from "@board-games/core";
-import UnoCardDeck from "./cards/UnoOwnedCards";
+import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
+import UnoCardDeck from "./cards/UnoCardDeck";
+import {UnoPlayerDisplayCore} from "./cards/UnoPlayerDisplay";
 import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";
 
@@ -15,13 +17,13 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
     setUsedCards([data.topCard]);
   };
   handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, card: UnoCardItem, cards: number }) => {
-    setUsedCards(prev => [data.card, ...prev]);
+    setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.card]);
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
-      setUsedCards(prev => [...prev, clickedCard!!.card]);
+      setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card]);
     }, Math.max(250 - age, 0));
     setTimeout(() => {
       setOwnedCards(data.cards);
@@ -44,8 +46,10 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
 
   return (
     <div className={"UnoView"}>
+      <UnoPlayerDisplayCore position={"Top"} init={usedCards.length <= 1} cards={5}/>
+      <UnoCardDeck/>
       <UnoUsedCards cards={usedCards}/>
-      <UnoCardDeck cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
+      <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
     </div>
   );
 };

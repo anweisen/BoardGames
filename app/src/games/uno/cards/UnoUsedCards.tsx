@@ -9,7 +9,7 @@ export default ({cards}: { cards: UnoCardItem[] }) => {
   return (
     <div className={"UnoUsedCards"}>
       {cards.map((card, index) => (
-        <div key={index} className={"UnoCard"} style={properties(states, index)}>
+        <div key={index + "-" + card.color + "-" + card.type} className={"UnoCard"} style={properties(states, index)}>
           <UnoCardCore type={card.type} color={card.color}/>
         </div>
       ))}
