@@ -58,17 +58,17 @@
 		}
 
 		&.Fade + .UnoCard {
-			background: blue;
+			//background: blue;
 			animation: follow-left .25s .25s ease-out forwards;
 		}
 
 		&:first-child.Fade + .UnoCard {
-			background: purple;
+			//background: purple;
 			animation: follow-left-end .25s .25s ease-out forwards;
 		}
 
 		&:has(+ .Fade) {
-			background: red;
+			//background: red;
 			animation: follow-right .25s .25s ease-out forwards;
 		}
 

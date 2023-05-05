@@ -3,10 +3,16 @@
 	transform-style: preserve-3d;
 	perspective: 500px;
 	perspective-origin: 150*.5px -100px; // width=250px
+	width: calc(20dvw);
 
 	.UnoCard {
 		position: absolute;
 		filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 1));
+		width: 20dvw;
+		svg {
+			width: 100%;
+			height: auto;
+		}
 
 		&:last-child {
 			animation: lay .7s cubic-bezier(.13,.69,.2,.75);
@@ -15,14 +21,14 @@
 		$rotateX: 90deg;
 		@for $i from 1 through 100 {
 			&:nth-child(#{$i}) {
-				transform: rotateX($rotateX) rotateZ(var(--rotate)) translateZ(#{5px*min($i - 1, 5)}) translateY(var(--offsetY));
+				transform: rotateX($rotateX) rotateZ(var(--rotate)) translateZ(#{3px*min($i - 1)}) translateY(var(--offsetY));
 			}
 		}
 
 		@keyframes lay {
 			from {
 				opacity: 0;
-				transform: rotateX(70deg) rotateZ(var(--rotate)) translateZ(200px);
+				transform: rotateX(70deg) rotateZ(var(--rotate)) translateZ(100px);
 			}
 			30% {
 				opacity: 1;
