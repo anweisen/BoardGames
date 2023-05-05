@@ -1,34 +1,42 @@
 .UnoUsedCards {
 	position: relative;
 	transform-style: preserve-3d;
-	perspective: 500px;
-	perspective-origin: 150*.5px -100px; // width=250px
-	width: calc(20dvw);
+	perspective: 750px;
+	//perspective: 500px;
+	//perspective-origin: 150*.5px -100px; // width=250px
+
+	$width: min(20dvw, 20dvh);
+	width: $width;
+	height: calc($width*(350/250));
+	margin: 0 calc($width*.25);
 
 	.UnoCard {
 		position: absolute;
 		filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 1));
-		width: 20dvw;
+		width: $width;
+
 		svg {
 			width: 100%;
 			height: auto;
 		}
 
 		&:last-child {
-			animation: lay .7s cubic-bezier(.13,.69,.2,.75);
+			animation: lay .7s cubic-bezier(.13, .69, .2, .75);
 		}
 
 		$rotateX: 90deg;
 		@for $i from 1 through 100 {
 			&:nth-child(#{$i}) {
-				transform: rotateX($rotateX) rotateZ(var(--rotate)) translateZ(#{3px*min($i - 1)}) translateY(var(--offsetY));
+				//transform: rotateX($rotateX) rotateZ(var(--rotate)) translateZ(#{3px*min($i - 1)}) translateY(var(--offsetY));
+				transform: rotateX(45deg) rotateZ(var(--rotate)) translateZ(#{3px*min($i - 1)}) translateY(var(--offsetY));
 			}
 		}
 
 		@keyframes lay {
 			from {
 				opacity: 0;
-				transform: rotateX(70deg) rotateZ(var(--rotate)) translateZ(100px);
+				//transform: rotateX(70deg) rotateZ(var(--rotate)) translateZ(100px);
+				transform: rotateX(30deg) rotateZ(var(--rotate)) translateZ(100px);
 			}
 			30% {
 				opacity: 1;
