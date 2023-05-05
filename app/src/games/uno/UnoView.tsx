@@ -1,6 +1,6 @@
 import {MutableRefObject, useState} from "react";
 import {canUseCard, InitUnoPayload, SocketMessageType, UnoCardItem} from "@board-games/core";
-import UnoCardDeck from "./cards/UnoCardDeck";
+import UnoCardDeck from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
 import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";

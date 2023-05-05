@@ -105,7 +105,7 @@ const LobbyContext = () => {
 
 const LobbyConnecting = () => {
   return (
-    <div>
+    <div className={"Connecting"}>
       Connecting..
     </div>
   );

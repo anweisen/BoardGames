@@ -1,18 +1,27 @@
 :root {
-  --uno-red: #D72600;
-  --uno-blue: #0956BF;
-  --uno-green: #379711;
-  --uno-yellow: #ECD407;
+	--uno-red: #D72600;
+	--uno-blue: #0956BF;
+	--uno-green: #379711;
+	--uno-yellow: #ECD407;
 	--uno-black: black;
-  --uno-card-background: white;
-  //--uno-card-accent: black;
+	--uno-card-background: white;
+	//--uno-card-accent: black;
 }
 
 .UnoView {
-  user-select: none;
+	user-select: none;
 
 	width: 100dvw;
 	height: 100dvh;
 	display: grid;
 	place-items: center;
+	grid-template-columns: 10% auto 10%;
+
+	.UnoUsedCards {
+		grid-area: 2 / 2;
+	}
+
+	.UnoOwnedCards {
+		grid-area: 3 / 2;
+	}
 }
