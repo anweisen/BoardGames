@@ -12,7 +12,7 @@ export default ({cards, canUse, clicked, useCard, myTurn}: {
   return (
     <div className={"UnoOwnedCards" + (!myTurn ? " Waiting" : "")}>
       {cards.map((card, index) => (
-        <div key={index} className={"UnoCard" + (index === clicked ? " Fade" : "") + (!canUse(card) ? " Locked" : "")} onClick={canUse(card) ? () => useCard(index) : undefined}>
+        <div key={index + "-" + card.type + "-" + card.color} className={"UnoCard" + (index === clicked ? " Fade" : "") + (!canUse(card) ? " Locked" : "")} onClick={canUse(card) ? () => useCard(index) : undefined}>
           <UnoCardCore type={card.type} color={card.color}/>
         </div>))}
     </div>

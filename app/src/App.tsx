@@ -97,7 +97,7 @@ const LobbyContext = () => {
         (!connectionRef.current || !socket ? <>LOST CON</> :
           (!initPayload ? <LobbyConnecting/> :
             (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
-                (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef}/>)
+                (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
             )))
       }
     </div>

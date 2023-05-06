@@ -7,17 +7,17 @@
 	overflow: hidden;
 	//width: 100dvw;
 
-	transform-style: preserve-3d;
-	perspective: 1000px;
+	//transform-style: preserve-3d;
+	//perspective: 1000px;
 
 	&.Waiting {
 	}
 
 	.UnoCard {
-		transform: rotateX(7deg);
+		//transform: rotateX(5deg);
 		transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
 		margin-right 0.1s cubic-bezier(0, 0.5, 0.75, 1),
-		margin-bottom 0.1s cubic-bezier(0, 0.5, 0.75, 1),
+		margin-bottom 0.25s cubic-bezier(0, 0.5, 0.75, 1),
 		transform 0.1s ease-in-out,
 		filter 0.1s ease-in-out;
 

@@ -1,5 +1,5 @@
 import {MutableRefObject, useState} from "react";
-import {canUseCard, InitUnoPayload, SocketMessageType, UnoCardItem} from "@board-games/core";
+import {canUseCard, InitUnoPayload, PlayerInfo, SocketMessageType, UnoCardItem} from "@board-games/core";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
 import UnoCardDeck from "./cards/UnoCardDeck";
@@ -7,17 +7,27 @@ import {UnoPlayerDisplayCore} from "./cards/UnoPlayerDisplay";
 import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";
 
-export default ({connection, handler}: { connection: MutableRefObject<Connection>, handler: MutableRefObject<SocketHandlers> }) => {
+export default ({connection, handler, players, selfId}: {
+  connection: MutableRefObject<Connection>,
+  handler: MutableRefObject<SocketHandlers>,
+  players: PlayerInfo[],
+  selfId: string
+}) => {
   const [usedCards, setUsedCards] = useState<UnoCardItem[]>([]);
   const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
   const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card: UnoCardItem }>();
+  const [order, setOrder] = useState<string[]>();
+  const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: InitUnoPayload) => {
     setOwnedCards(data.cards);
     setUsedCards([data.topCard]);
+    setOrder(data.order);
+    setOthersCardAmount(Object.fromEntries(data.order.filter(cur => cur != selfId).map(cur => [cur, data.cards.length])));
   };
   handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, card: UnoCardItem, cards: number }) => {
     setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.card]);
+    setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1 }))
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     const age = Date.now() - clickedCard!!.time;
@@ -46,10 +56,16 @@ export default ({connection, handler}: { connection: MutableRefObject<Connection
 
   return (
     <div className={"UnoView"}>
-      <UnoPlayerDisplayCore position={"Top"} init={usedCards.length <= 1} cards={5}/>
-      <UnoCardDeck/>
-      <UnoUsedCards cards={usedCards}/>
-      <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
+      {!usedCards || !ownedCards || !order || !othersCardAmount ? <>INIT AWAITING!=!=!</> : <>
+        {order.map(player => ({player: player, amount: othersCardAmount[player]}))
+          .filter(({player, amount}) => player !== selfId && players.some(info => info.id === player))
+          .map(({player, amount}) => (
+            <UnoPlayerDisplayCore key={player} position={"Top"} init={usedCards.length <= 1} cards={amount}/>
+          ))}
+        <UnoCardDeck/>
+        <UnoUsedCards cards={usedCards}/>
+        <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
+      </>}
     </div>
   );
 };
