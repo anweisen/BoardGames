@@ -6,9 +6,7 @@ import {LobbyId} from "../lobby/models";
 const router = express.Router();
 
 router.post("/create", (req, res) => {
-  console.log(req.body);
   const body = req.body;
-  console.log(body);
 
   //TODO validate input
 

@@ -26,6 +26,11 @@
 		flex-direction: column;
 		gap: 25px;
 
+		@media (max-width: 600px) {
+			width: 85%;
+			box-sizing: border-box;
+		}
+
 		.InputGroup {
 			display: flex;
 			flex-direction: column;
@@ -52,6 +57,10 @@
 			display: flex;
 			justify-content: space-evenly;
 			gap: 10px;
+			
+			@media (max-width: 450px) {
+				flex-direction: column;
+			}
 
 			.Button {
 				width: 50%;
@@ -59,7 +68,14 @@
 				border-radius: 15px;
 				font-family: Poppins, sans-serif;
 				text-align: center;
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
 				cursor: pointer;
+
+				@media (max-width: 450px) {
+					width: auto;
+				}
 
 				&.Cancel {
 					background: #ccc9c9;

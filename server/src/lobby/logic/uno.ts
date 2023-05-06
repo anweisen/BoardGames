@@ -69,6 +69,12 @@ export class UnoGame extends GameBase {
 
         this.useCard(cardIndex, card, player);
         break;
+      case SocketMessageType.UNO_DRAW:
+        if (player !== this.currentPlayer())
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
+
+        this.drawCardsWithPackets(player, 1);
+        break;
     }
   }
 
@@ -119,6 +125,16 @@ export class UnoGame extends GameBase {
     }
   }
 
+  drawCardsWithPackets(player: PlayerId, amount: number) {
+    const cards: UnoCardItem[] = [];
+    for (let i = 0; i < amount; i++) {
+      cards.push(pickRandom(UnoGame.allCards));
+    }
+    this.cards.set(player, [...this.cards.get(player)!!, ...cards]);
+    this.sendPacket(player, SocketMessageType.UNO_CONFIRM_DRAW, {cards: [cards]});
+    this.broadcastPacket(SocketMessageType.UNO_DRAW, {player: player, amount: amount}, player);
+  }
+
   pickStartCard(): UnoCardItem {
     while (true) {
       const card = pickRandom(UnoGame.allCards);
@@ -126,7 +142,6 @@ export class UnoGame extends GameBase {
         return card;
     }
   }
-
 
   nextPlayerInDirection(): PlayerId {
     this.current++;

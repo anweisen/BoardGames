@@ -7,6 +7,10 @@
 :root {
 	--accent-color: #3179d7;
 	--accent-color-effect: #1761be;
+
+	//--background: rgb(35, 35, 42);
+	--background: linear-gradient(180deg, rgb(35, 35, 42) -30%, rgb(25, 25, 32) 150%);
+	--background-secondary: rgb(38, 38, 48);
 }
 
 * {
@@ -38,7 +42,7 @@ input:focus, textarea:focus, select:focus, button {
 }
 
 #root {
-	background: rgb(35, 35, 42);
+	background: var(--background);
 	width: 100%;
 	height: 100%;
 }

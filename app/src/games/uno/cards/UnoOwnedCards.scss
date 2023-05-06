@@ -72,6 +72,20 @@
 			animation: follow-right .25s .25s ease-out forwards;
 		}
 
+		&.Drawn {
+			animation: spawn-own-card .3s ease backwards;
+		}
+
+		@keyframes spawn-own-card {
+			from {
+				transform: translateY(-25px);
+				opacity: 0;
+			}
+			30% {
+				opacity: 1;
+			}
+		}
+
 		@keyframes fade {
 			50% {
 				opacity: 1;

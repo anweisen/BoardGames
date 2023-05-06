@@ -111,6 +111,10 @@
 		display: flex;
 		gap: 15px;
 
+		@media (max-width: 400px) {
+			gap: 8px;
+		}
+
 		animation: empty-fade-in .45s cubic-bezier(.4, .75, .64, .99);
 
 		@keyframes empty-fade-in {
@@ -125,14 +129,24 @@
 			height: auto;
 			color: rgba(255, 255, 255, 0.9);
 			filter: drop-shadow(1px 1px 5px rgba(0, 0, 0.9));
+
+			@media (max-width: 600px) {
+				width: 60px;
+			}
+			@media (max-width: 400px) {
+				width: 55px;
+			}
 		}
 
 		span {
 			margin: auto 0;
 			font-family: "Poppins", sans-serif;
 			font-size: 17px;
-			@media (max-width: 800px) {
-				font-size: 14px;
+			@media (max-width: 600px) {
+				font-size: 15px;
+			}
+			@media (max-width: 400px) {
+				font-size: 13.5px;
 			}
 
 			a {

@@ -15,7 +15,8 @@ export default ({connection, handler, players, selfId}: {
 }) => {
   const [usedCards, setUsedCards] = useState<UnoCardItem[]>([]);
   const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
-  const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card: UnoCardItem }>();
+  const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card?: UnoCardItem }>();
+  const [drawnCard, setDrawnCard] = useState<{ amount: number }>();
   const [order, setOrder] = useState<string[]>();
   const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
   const [currentPlayer, setCurrentPlayer] = useState<string>();
@@ -35,11 +36,19 @@ export default ({connection, handler, players, selfId}: {
     setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.card]);
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
   };
+  handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
+    setOwnedCards(prev => [...prev, ...data.cards]);
+    setClickedCard(undefined);
+    setDrawnCard({amount: data.cards.length});
+    setTimeout(() => {
+      setDrawnCard(undefined);
+    }, 500);
+  };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
-      setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card]);
+      setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card!!]);
     }, Math.max(250 - age, 0));
     setTimeout(() => {
       setOwnedCards(data.cards);
@@ -49,11 +58,16 @@ export default ({connection, handler, players, selfId}: {
   handler.current[SocketMessageType.UNO_REFUSE] = (type, data: { card: UnoCardItem }) => {
     setClickedCard(undefined);
   };
+  handler.current[SocketMessageType.UNO_DRAW] = (type, data: { player: string, amount: number }) => {
+    setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - data.amount}));
+  };
 
   const drawCard = () => {
     if (selfId !== currentPlayer) return;
-
-  }
+    if (clickedCard !== undefined) return;
+    setClickedCard({time: Date.now(), index: -1, card: undefined});
+    connection.current.sendPacket(SocketMessageType.UNO_DRAW, {});
+  };
   const useCard = (index: number) => {
     if (selfId !== currentPlayer) return;
     if (clickedCard !== undefined) return;
@@ -73,7 +87,7 @@ export default ({connection, handler, players, selfId}: {
           <UnoUsedCards cards={usedCards}/>
           <UnoCardDeck drawCard={drawCard}/>
         </span>
-        <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} useCard={useCard} myTurn={true}/>
+        <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={true}/>
       </>}
     </div>
   );
@@ -91,11 +105,8 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
   // 2  -> right,      left
   // 3  -> right, top, left
   // 4+ -> right, wrap,left
-
-  const nameFinder = Object.fromEntries(players.map(value => [value.id, value.name]));
-
   const selfOrderIndex = order.indexOf(selfId); // = number of players before self
-  const shiftedOrder: string[] = []
+  const shiftedOrder: string[] = [];
   for (let i = selfOrderIndex + 1; i < order.length; i++) {
     shiftedOrder.push(order[i]);
   }
@@ -103,11 +114,15 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
     shiftedOrder.push(order[i]);
   }
 
+  const nameFinder = Object.fromEntries(players.map(value => [value.id, value.name]));
   return (
     <>
-      {(players.length === 1) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Top"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]} cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]} cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[shiftedOrder.length - 1]} name={nameFinder[shiftedOrder[shiftedOrder.length - 1]]}
+      {(players.length === 1) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Top"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
+                                                       cards={othersCardAmount[shiftedOrder[0]]}/>}
+      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
+                                                      cards={othersCardAmount[shiftedOrder[0]]}/>}
+      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[shiftedOrder.length - 1]}
+                                                      name={nameFinder[shiftedOrder[shiftedOrder.length - 1]]}
                                                       cards={othersCardAmount[shiftedOrder[shiftedOrder.length - 1]]}/>}
       {(players.length >= 3) && <UnoPlayerDisplayWrapperTop currentPlayer={currentPlayer} init={init} players={shiftedOrder
         .filter((value, index, array) => index !== 0 && index !== (array.length - 1))

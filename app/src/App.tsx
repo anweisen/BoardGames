@@ -34,6 +34,7 @@ const LobbyContext = () => {
   const [refused, setRefused] = useState<RefuseLobbyPayload>();
   const [players, setPlayers] = useState<PlayerInfo[]>([]);
   const [inLobby, setInLobby] = useState(true);
+  const [playerName, setPlayerName] = useState<string>();
   const connectionRef = useRef<Connection>() as MutableRefObject<Connection>;
   const handlerRef = useRef<SocketHandlers>({}) as MutableRefObject<SocketHandlers>;
 
@@ -87,19 +88,16 @@ const LobbyContext = () => {
     };
   };
 
-  // useEffect(() => {
-  //   if (!socket) {
-  //     connectSocket(`${config.ws}/gateway/join/${params.id}`);
-  //   }
-  // }, [params.id]);
-
   return (
     <>
       {refused ? <LobbyRefused reason={refused.reason}/> :
-        (!socket ? <JoinLobby join={name => connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`)}/> :
+        (!socket ? <JoinLobby join={name => {
+            setPlayerName(name);
+            connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`);
+          }}/> :
           (!connectionRef.current ? <>LOST CON</> :
-            (!initPayload ? <LobbyConnecting/> :
-              (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
+            (!initPayload || !playerName ? <LobbyConnecting/> :
+              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef}/> :
                   (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
               ))))
       }

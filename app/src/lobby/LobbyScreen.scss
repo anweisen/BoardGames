@@ -1,0 +1,68 @@
+.LobbyScreen {
+	height: 100%;
+	width: 100%;
+	display: grid;
+	place-items: center;
+
+	.Panel {
+		padding: 3dvh 4dvw;
+		width: 50dvw;
+		background: var(--background-secondary);
+		border-radius: 25px;
+		box-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+
+		.Header {
+			width: 100%;
+			color: white;
+			font-family: Poppins, sans-serif;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			margin-bottom: 25px;
+
+			.Title {
+				font-size: 25px;
+			}
+
+			.Button {
+				margin: auto 0;
+				background: var(--accent-color);
+				padding: 4px 12px;
+				border-radius: 7px;
+				cursor: pointer;
+			}
+		}
+
+		.Content {
+			display: flex;
+			gap: 15px;
+			margin-bottom: 10px;
+
+			.Players {
+				width: 50%;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+
+				.Player {
+					background: rgba(0, 0, 0, .15);
+					color: rgba(255, 255, 255, .85);
+					padding: 10px 30px;
+					border-radius: 10px;
+					font-family: Quicksand, sans-serif;
+				}
+			}
+
+			.Border {
+				margin-top: -15px;
+				margin-bottom: -15px;
+				width: 2px;
+				background: rgba(255, 255, 255, .1);
+			}
+
+			.LobbySettings {
+				width: 50%;
+			}
+		}
+	}
+}
