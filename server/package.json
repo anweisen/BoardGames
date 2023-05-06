@@ -6,7 +6,9 @@
   "author": "anweisen",
   "license": "ISC",
   "scripts": {
-    "start": "nodemon src/index.ts"
+    "start": "nodemon src/index.ts",
+    "compile": "tsc -p tsconfig.json",
+    "server": "node dist/index.js"
   },
   "dependencies": {
     "express": "^4.18.2",

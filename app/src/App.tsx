@@ -5,6 +5,7 @@ import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
 import UnoView from "./games/uno/UnoView";
+import config from "./config";
 
 export default () => {
   return (
@@ -86,7 +87,7 @@ const LobbyContext = () => {
 
   useEffect(() => {
     if (!socket) {
-      connectSocket(`ws://localhost:5000/gateway/join/${params.id}?name=${Date.now()}`);
+      connectSocket(`${config.ws}/gateway/join/${params.id}?name=${Date.now()}`);
     }
   }, [params.id]);
 

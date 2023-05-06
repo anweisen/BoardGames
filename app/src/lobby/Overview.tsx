@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import {MdOutlineDangerous, MdPublic} from "react-icons/md";
 import {LobbyItem} from "@board-games/core";
 import "./Overview.scss";
+import config from "../config";
 
 export default () => {
   const reloadTime = 3;
@@ -19,7 +20,7 @@ export default () => {
   });
   useEffect(() => {
     if (reload === 0) {
-      fetch("http://localhost:5000/lobbies")
+      fetch(`${config.api}/lobbies`)
         .then(value => value.json())
         .then(value => setLobbies(value))
         .then(value => setReload(reloadTime));
