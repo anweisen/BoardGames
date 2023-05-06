@@ -14,6 +14,7 @@ export enum SocketMessageType {
   UNO_USE = "UNO_USE",
   UNO_CONFIRM = "UNO_CONFIRM",
   UNO_REFUSE = "UNO_REFUSE",
+  UNO_NEXT = "UNO_NEXT",
   UNO_DRAW = "UNO_DRAW",
   UNO_PICK = "UNO_PICK",
 

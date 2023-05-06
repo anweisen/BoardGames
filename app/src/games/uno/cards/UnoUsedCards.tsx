@@ -18,6 +18,12 @@ export default ({cards}: { cards: UnoCardItem[] }) => {
 }
 
 const properties = (states: MutableRefObject<Record<number, { }>>, index: number): CSSProperties => {
+  if (index === 0) return {
+    // @ts-ignore
+    "--rotate": 0,
+    "--offsetX": 0,
+    "--offsetY": 0,
+  };
   if (states.current[index]) return states.current[index];
   const props: CSSProperties = {
     // @ts-ignore

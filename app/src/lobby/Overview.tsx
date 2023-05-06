@@ -29,21 +29,28 @@ export default () => {
 
   return (
     <div className={"Overview"}>
-      <Category title={"Games"}>
+      <Category title={"Games"} count={1}>
         <GameCard/>
       </Category>
-      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>}>
-        {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) : <div className={"Empty"}><MdOutlineDangerous/><p></p></div>}
+      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>} count={lobbies?.length|| 0}>
+        {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
+          <div className={"Empty"}>
+            <MdOutlineDangerous/>
+            <span>
+              <p>There are no waiting Lobbies</p>
+              <p>Why dont you create a <Link to={"/new"}>new Lobby</Link>?</p>
+            </span>
+          </div>}
       </Category>
     </div>
   );
 }
 
-const Category = ({title, info, children}: { title: string, info?: React.ReactNode, children: React.ReactNode }) => {
+const Category = ({title, info, children, count}: { title: string, info?: React.ReactNode, children: React.ReactNode, count:number }) => {
   return (
     <div className={"Category"}>
       <div className={"Title"}>
-        <div className={"Left"}>{title}</div>
+        <div className={"Left"}>{title} <p>({count})</p></div>
         <div className={"Right"}>
           {info}
           {/*<MdKeyboardArrowDown/>*/}

@@ -1,11 +1,16 @@
 .Overview {
 	padding: 5dvh 25dvw;
-	//box-sizing: border-box;
-	//height: 100dvh;
 	margin: auto 0;
 	display: flex;
 	flex-direction: column;
 	gap: 50px;
+	
+	@media (max-width: 1000px) {
+		padding: 5dvh 12.5dvw;
+	}
+	@media (max-width: 750px) {
+		padding: 5dvh 7.5dvw;
+	}
 
 	.Category {
 
@@ -19,6 +24,15 @@
 				font-family: 'Poppins', sans-serif;
 				font-size: 24px;
 				font-weight: 500;
+
+				display: flex;
+				gap: 10px;
+
+				p {
+					margin: auto 0;
+					font-size: 16px;
+					color: rgba(255, 255, 255, 0.45);
+				}
 			}
 
 			.Right {
@@ -67,13 +81,14 @@
 					margin: auto;
 					font-size: 20px;
 				}
+
 				.Name {
 					grid-area: b;
 				}
 
-				animation: spawn .45s cubic-bezier(.4, .75, .64, .99);
+				animation: spawn-card .45s cubic-bezier(.4, .75, .64, .99);
 
-				@keyframes spawn {
+				@keyframes spawn-card {
 					from {
 						transform: translateY(-15px);
 						opacity: 0.1;
@@ -81,6 +96,7 @@
 				}
 
 				transition: padding .25s ease, transform .4s ease;
+
 				&:hover {
 					padding: 10px 30px;
 					//transform: translateY(1px);
@@ -88,5 +104,60 @@
 			}
 		}
 
+	}
+
+	.Empty {
+		color: rgba(255, 255, 255, .65);
+		display: flex;
+		gap: 15px;
+
+		animation: empty-fade-in .45s cubic-bezier(.4, .75, .64, .99);
+
+		@keyframes empty-fade-in {
+			from {
+				transform: translateY(15px);
+				opacity: 0.1;
+			}
+		}
+
+		svg {
+			width: 65px;
+			height: auto;
+			color: rgba(255, 255, 255, 0.9);
+			filter: drop-shadow(1px 1px 5px rgba(0, 0, 0.9));
+		}
+
+		span {
+			margin: auto 0;
+			font-family: "Poppins", sans-serif;
+			font-size: 17px;
+			@media (max-width: 800px) {
+				font-size: 14px;
+			}
+
+			a {
+				color: var(--accent-color);
+				position: relative;
+				display: inline-block;
+			}
+
+			a::after {
+				content: '';
+				position: absolute;
+				width: 100%;
+				transform: scaleX(0);
+				height: 1px;
+				bottom: 0;
+				left: 0;
+				background-color: currentColor;
+				transform-origin: bottom right;
+				transition: transform 0.25s ease-out;
+			}
+
+			a:hover::after {
+				transform: scaleX(1);
+				transform-origin: bottom left;
+			}
+		}
 	}
 }

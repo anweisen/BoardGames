@@ -6,8 +6,13 @@ import {LobbyId} from "../lobby/models";
 const router = express.Router();
 
 router.post("/create", (req, res) => {
-  // @ts-ignore
-  const lobbyId = createLobby(GameType.UNO, undefined, undefined);
+  console.log(req.body);
+  const body = req.body;
+  console.log(body);
+
+  //TODO validate input
+
+  const lobbyId = createLobby(GameType.UNO, body.lobbyName, body.password);
   res.json({id: lobbyId});
 });
 

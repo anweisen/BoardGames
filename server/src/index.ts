@@ -10,6 +10,7 @@ app.use((req, res, next) => {
 
 import cors from "./routes/cors";
 app.use(cors)
+app.use(express.json());
 
 import index from "./routes/index";
 import gateway from "./routes/gateway";

@@ -53,7 +53,7 @@ export const createLobby = (type: GameType, lobbyName: string, password: string 
     id: lobbyId,
     birth: Date.now(),
     type: type,
-    name: lobbyName || lobbyId,
+    name: lobbyName || type + "-" + lobbyId,
     password: password,
     state: LobbyState.LOBBY,
     participants,

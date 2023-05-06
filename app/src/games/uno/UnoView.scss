@@ -9,27 +9,39 @@
 
 .UnoView {
 	user-select: none;
+	overflow: hidden;
 
 	width: 100dvw;
 	height: 100dvh;
 
 	display: grid;
 	place-items: center;
-	grid-template-columns: 10% auto 10%;
+	grid-template-columns: 15% auto 15%;
+	grid-template-rows: 20% auto 30%;
 
-	.UnoPlayerDisplay {
+	.UnoPlayerDisplay.Top, .UnoPlayerDisplayWrapper.Top {
 		grid-area: 1 / 2;
 	}
-
-	.UnoCardDeck {
-		grid-area: 2 / 2;
+	.UnoPlayerDisplay.Left {
+		grid-area: 2 / 1;
+	}
+	.UnoPlayerDisplay.Right {
+		grid-area: 2 / 3;
 	}
 
-	.UnoUsedCards {
-		grid-area: 3 / 2;
+	.PlayCards {
+		grid-area: 2 / 2;
+		display: flex;
+		position: relative;
+
+		.UnoCardDeck {
+			position: absolute;
+			left: 100%;
+			top: -25%;
+		}
 	}
 
 	.UnoOwnedCards {
-		grid-area: 4 / 2;
+		grid-area: 3 / 2;
 	}
 }

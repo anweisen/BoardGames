@@ -1,5 +1,5 @@
 import * as ws from "ws";
-import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection, UnoSpecialTypes} from "@board-games/core";
+import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection} from "@board-games/core";
 import {GameBase} from "./game";
 import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
 
@@ -43,7 +43,7 @@ export class UnoGame extends GameBase {
 
         shuffle(this.order);
         this.topCard = this.pickStartCard();
-        this.distributeCards(17);
+        this.distributeCards(12);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {
@@ -105,7 +105,8 @@ export class UnoGame extends GameBase {
         this.nextPlayerInDirection();
         break;
     }
-    this.nextPlayerInDirection();
+    const nextPlayer = this.nextPlayerInDirection();
+    this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
   }
 
   distributeCards(amount: number) {

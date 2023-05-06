@@ -1,10 +1,11 @@
 import {BrowserRouter, Route, Routes, useParams} from "react-router-dom";
-import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
+import React, {MutableRefObject, useCallback, useRef, useState} from "react";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
 import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
 import UnoView from "./games/uno/UnoView";
+import JoinLobby from "./lobby/JoinLobby";
 import config from "./config";
 
 export default () => {
@@ -60,6 +61,7 @@ const LobbyContext = () => {
   };
 
   const connectSocket = (url: string) => {
+    console.log("Connecting to", url);
     const socket = new WebSocket(url);
     socket.onmessage = event => {
       const text = event.data.toString();
@@ -85,22 +87,23 @@ const LobbyContext = () => {
     };
   };
 
-  useEffect(() => {
-    if (!socket) {
-      connectSocket(`${config.ws}/gateway/join/${params.id}?name=${Date.now()}`);
-    }
-  }, [params.id]);
+  // useEffect(() => {
+  //   if (!socket) {
+  //     connectSocket(`${config.ws}/gateway/join/${params.id}`);
+  //   }
+  // }, [params.id]);
 
   return (
-    <div style={{display: "grid", placeItems: "center", height: "100%", color: "white"}}>
+    <>
       {refused ? <LobbyRefused reason={refused.reason}/> :
-        (!connectionRef.current || !socket ? <>LOST CON</> :
-          (!initPayload ? <LobbyConnecting/> :
-            (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
-                (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
-            )))
+        (!socket ? <JoinLobby join={name => connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`)}/> :
+          (!connectionRef.current ? <>LOST CON</> :
+            (!initPayload ? <LobbyConnecting/> :
+              (inLobby ? <LobbyScreen payload={initPayload} players={players} connection={connectionRef}/> :
+                  (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
+              ))))
       }
-    </div>
+    </>
   );
 };
 

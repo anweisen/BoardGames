@@ -7,6 +7,7 @@
   "dependencies": {
     "@board-games/core": "../core",
     "react": "^18.2.0",
+    "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-router": "^6.10.0",
