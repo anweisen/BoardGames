@@ -11,10 +11,11 @@ export default ({cards, canUse, clicked, drawn, useCard, myTurn}: {
   myTurn: boolean,
 }) => {
   return (
-    <div className={"UnoOwnedCards" + (!myTurn ? " Waiting" : "")}>
+    // @ts-ignore
+    <div className={"UnoOwnedCards" + (!myTurn ? " Waiting" : "")} style={{"--drawn": drawn}}>
       {cards.map((card, index, array) => (
         <div key={index + "-" + card.type + "-" + card.color}
-             className={"UnoCard" + (index === clicked ? " Fade" : "") + (drawn && index >= array.length - drawn ? " Drawn" : "") + (!canUse(card) ? " Locked" : "")}
+             className={"UnoCard" + (index === clicked ? " Fade" : "") + (drawn && index >= (array.length - drawn) ? " Drawn" : "") + (!canUse(card) ? " Locked" : "")}
              onClick={canUse(card) ? () => useCard(index) : undefined}>
           <UnoCardCore type={card.type} color={card.color}/>
         </div>))}

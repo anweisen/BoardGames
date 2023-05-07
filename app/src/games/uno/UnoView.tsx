@@ -1,5 +1,5 @@
 import {MutableRefObject, useState} from "react";
-import {canUseCard, InitUnoPayload, PlayerInfo, SocketMessageType, UnoCardItem} from "@board-games/core";
+import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
 import UnoCardDeck from "./cards/UnoCardDeck";
@@ -21,8 +21,9 @@ export default ({connection, handler, players, selfId}: {
   const [order, setOrder] = useState<string[]>();
   const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
   const [currentPlayer, setCurrentPlayer] = useState<string>();
+  const [effectPayload, setEffectPayload] = useState<UnoEffectPayload>();
 
-  handler.current[SocketMessageType.INIT_GAME] = (type, data: InitUnoPayload) => {
+  handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     // window.document.body.requestFullscreen({navigationUI: "hide"});
     setOwnedCards(data.cards);
     setUsedCards([data.topCard]);
@@ -43,7 +44,7 @@ export default ({connection, handler, players, selfId}: {
     setOwnedCards(prev => [...prev, ...data.cards]);
     setTimeout(() => {
       setDrawnCard(undefined);
-    }, 500);
+    }, 1000);
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[] }) => {
     const age = Date.now() - clickedCard!!.time;
@@ -60,7 +61,15 @@ export default ({connection, handler, players, selfId}: {
     setClickedCard(undefined);
   };
   handler.current[SocketMessageType.UNO_DRAW] = (type, data: { player: string, amount: number }) => {
-    setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - data.amount}));
+    setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] + data.amount}));
+  };
+  handler.current[SocketMessageType.UNO_EFFECT] = (type, data: UnoEffectPayload) => {
+    setTimeout(() => {
+      setEffectPayload(data);
+      setTimeout(() => {
+        setEffectPayload(undefined);
+      }, 3500);
+    }, 500);
   };
 
   const drawCard = () => {
@@ -87,9 +96,10 @@ export default ({connection, handler, players, selfId}: {
         <div className={"UnoView"}>
           <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
           <span className={"PlayCards"}>
-          <UnoUsedCards cards={usedCards}/>
-          <UnoCardDeck drawCard={drawCard}/>
-        </span>
+            <UnoUsedCards cards={usedCards}/>
+            <UnoCardDeck drawCard={drawCard}/>
+            {effectPayload?.drawCounter && <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span>}
+          </span>
           <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={true}/>
         </div>
       </>}

@@ -41,9 +41,15 @@ export const canUseCard = (colorBefore: UnoColorType, cardBefore: UnoCardType, c
   return colorBefore === cardNow.color || cardBefore === cardNow.type || cardNow.color === UnoColorType.BLACK;
 };
 
-export interface InitUnoPayload {
+export interface UnoInitPayload {
   direction: UnoDirection,
   order: string[],
   topCard: UnoCardItem,
   cards: UnoCardItem[],
+}
+
+export interface UnoEffectPayload {
+  changeDirection?: UnoDirection;
+  skipPlayer?: string;
+  drawCounter?: number;
 }

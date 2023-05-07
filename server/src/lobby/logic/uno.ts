@@ -4,13 +4,10 @@ import {GameBase} from "./game";
 import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
 
 const createAllCards = () => {
-  // every colored card x2 per color, every black card x4
   const cards: UnoCardItem[] = [];
-  for (let i = 0; i < 2; i++) {
-    for (let type of UnoColoredTypes) {
-      for (let color: UnoColorType = 1; color <= 4; color++) {
-        cards.push({type: type, color: color});
-      }
+  for (let type of UnoColoredTypes) {
+    for (let color: UnoColorType = 1; color <= 4; color++) {
+      cards.push({type: type, color: color});
     }
   }
   // for (let i = 0; i < 4; i++) {
@@ -28,7 +25,7 @@ export class UnoGame extends GameBase {
   private direction: UnoDirection = UnoDirection.CLOCKWISE;
   private current: number = 0;
   private topCard?: UnoCardItem;
-  private drawCards?: number;
+  private drawCounter?: number;
 
   constructor(getLobby: () => Lobby) {
     super(getLobby);
@@ -44,7 +41,7 @@ export class UnoGame extends GameBase {
 
         shuffle(this.order);
         this.topCard = this.pickStartCard();
-        this.distributeCards(12);
+        this.distributeCards(7);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {
@@ -65,9 +62,13 @@ export class UnoGame extends GameBase {
 
         if (player !== this.currentPlayer())
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
-        if (this.drawCards) {
-          if (this.topCard?.color !== card.color)
+        if (this.drawCounter) {
+          if (this.topCard?.type === UnoCardType.DRAW_PICK && card.type != UnoCardType.DRAW_PICK) // TODO allow +2 of chosen color
             return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
+
+          if (this.topCard?.type == UnoCardType.DRAW && card.type !== UnoCardType.DRAW)
+            return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
+
         } else if (!canUseCard(this.topCard!!.color, this.topCard!!.type, card))
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
 
@@ -77,9 +78,9 @@ export class UnoGame extends GameBase {
         if (player !== this.currentPlayer())
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
 
-        if (this.drawCards) {
-          this.drawCardsWithPackets(player, this.drawCards);
-          this.drawCards = 0;
+        if (this.drawCounter) {
+          this.drawCardsWithPackets(player, this.drawCounter);
+          this.drawCounter = 0;
         } else {
           this.drawCardsWithPackets(player, 1);
         }
@@ -115,13 +116,16 @@ export class UnoGame extends GameBase {
         if (this.cards.size === 2) {
           this.nextPlayerInDirection();
         }
+        this.broadcastPacket(SocketMessageType.UNO_EFFECT, {changeDirection: this.direction});
         break;
       case UnoCardType.SKIP:
-        this.nextPlayerInDirection();
+        const skipPlayer = this.nextPlayerInDirection();
+        this.broadcastPacket(SocketMessageType.UNO_EFFECT, {skipPlayer: skipPlayer});
         break;
       case UnoCardType.DRAW: // +2
-        if (!this.drawCards) this.drawCards = 0;
-        this.drawCards += 2;
+        if (!this.drawCounter) this.drawCounter = 0;
+        this.drawCounter += 2;
+        this.broadcastPacket(SocketMessageType.UNO_EFFECT, {drawCounter: this.drawCounter});
         break;
     }
     const nextPlayer = this.nextPlayerInDirection();

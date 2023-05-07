@@ -71,6 +71,12 @@
 
 		&.Drawn {
 			animation: spawn-own-card .3s ease backwards;
+
+			@for $i from 1 through 10 {
+				&:nth-last-of-type(#{$i}) {
+					animation-delay: calc(.125s * (var(--drawn) - $i));
+				}
+			}
 		}
 
 		@keyframes spawn-own-card {

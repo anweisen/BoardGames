@@ -84,7 +84,7 @@ const LobbyContext = () => {
       sendPacket(type: SocketMessageType, data: object) {
         socket?.send(JSON.stringify({t: type, d: data}));
       }
-    };
+    }
   };
 
   return (
