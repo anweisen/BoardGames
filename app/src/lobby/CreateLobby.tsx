@@ -1,7 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import config from "../config";
-import "./CreateLobby.scss";
+import "./CreateJoinLobby.scss";
 import {useState} from "react";
 
 export default () => {

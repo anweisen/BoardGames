@@ -6,6 +6,7 @@ import UnoCardDeck from "./cards/UnoCardDeck";
 import {UnoPlayerDisplayCore, UnoPlayerDisplayWrapperTop} from "./cards/UnoPlayerDisplay";
 import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";
+import LobbyLoading from "../../lobby/LobbyLoading";
 
 export default ({connection, handler, players, selfId}: {
   connection: MutableRefObject<Connection>,
@@ -37,9 +38,9 @@ export default ({connection, handler, players, selfId}: {
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
   };
   handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
-    setOwnedCards(prev => [...prev, ...data.cards]);
     setClickedCard(undefined);
     setDrawnCard({amount: data.cards.length});
+    setOwnedCards(prev => [...prev, ...data.cards]);
     setTimeout(() => {
       setDrawnCard(undefined);
     }, 500);
@@ -65,6 +66,7 @@ export default ({connection, handler, players, selfId}: {
   const drawCard = () => {
     if (selfId !== currentPlayer) return;
     if (clickedCard !== undefined) return;
+    if (drawnCard !== undefined) return;
     setClickedCard({time: Date.now(), index: -1, card: undefined});
     connection.current.sendPacket(SocketMessageType.UNO_DRAW, {});
   };
@@ -80,16 +82,18 @@ export default ({connection, handler, players, selfId}: {
   };
 
   return (
-    <div className={"UnoView"}>
-      {!usedCards || !ownedCards || !order || !othersCardAmount || !currentPlayer ? <>INIT AWAITING!=!=!</> : <>
-        <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
-        <span className={"PlayCards"}>
+    <>
+      {!usedCards || !ownedCards || !order || !othersCardAmount || !currentPlayer ? <LobbyLoading/> : <>
+        <div className={"UnoView"}>
+          <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
+          <span className={"PlayCards"}>
           <UnoUsedCards cards={usedCards}/>
           <UnoCardDeck drawCard={drawCard}/>
         </span>
-        <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={true}/>
+          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={true}/>
+        </div>
       </>}
-    </div>
+    </>
   );
 };
 

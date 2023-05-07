@@ -1,11 +1,12 @@
-import {BrowserRouter, Route, Routes, useParams} from "react-router-dom";
-import React, {MutableRefObject, useCallback, useRef, useState} from "react";
+import React, {MutableRefObject, useRef, useState} from "react";
+import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
 import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
 import UnoView from "./games/uno/UnoView";
 import JoinLobby from "./lobby/JoinLobby";
+import LobbyLoading from "./lobby/LobbyLoading";
 import config from "./config";
 
 export default () => {
@@ -30,6 +31,7 @@ export type SocketHandlers = Record<string, SocketHandler>
 const LobbyContext = () => {
   const params = useParams();
   const [socket, setSocket] = useState<WebSocket>();
+  const [closed, setClosed] = useState<any>();
   const [initPayload, setInitPayload] = useState<InitLobbyPayload>();
   const [refused, setRefused] = useState<RefuseLobbyPayload>();
   const [players, setPlayers] = useState<PlayerInfo[]>([]);
@@ -37,12 +39,6 @@ const LobbyContext = () => {
   const [playerName, setPlayerName] = useState<string>();
   const connectionRef = useRef<Connection>() as MutableRefObject<Connection>;
   const handlerRef = useRef<SocketHandlers>({}) as MutableRefObject<SocketHandlers>;
-
-  useCallback(() => {
-    if (!socket) {// @ts-ignore
-      connectionRef.current = undefined;
-    }
-  }, [socket]);
 
   handlerRef.current[SocketMessageType.INIT_LOBBY] = (type, data: InitLobbyPayload) => {
     setInitPayload(data);
@@ -77,7 +73,10 @@ const LobbyContext = () => {
     };
     socket.onclose = event => {
       console.log("WS: closed", event.code, event.reason);
+      // @ts-ignore
+      connectionRef.current = undefined;
       setSocket(undefined);
+      setClosed(event.code);
     };
     setSocket(socket);
     setRefused(undefined);
@@ -91,12 +90,12 @@ const LobbyContext = () => {
   return (
     <>
       {refused ? <LobbyRefused reason={refused.reason}/> :
-        (!socket ? <JoinLobby join={name => {
+        (!socket && !closed ? <JoinLobby join={name => {
             setPlayerName(name);
             connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`);
           }}/> :
-          (!connectionRef.current ? <>LOST CON</> :
-            (!initPayload || !playerName ? <LobbyConnecting/> :
+          (!connectionRef.current && false ? <LobbyDisconnected/> :
+            (!initPayload || !playerName ? <LobbyLoading/> :
               (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef}/> :
                   (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
               ))))
@@ -105,18 +104,17 @@ const LobbyContext = () => {
   );
 };
 
-const LobbyConnecting = () => {
+const LobbyRefused = ({reason}: { reason: RefuseReason }) => {
   return (
-    <div className={"Connecting"}>
-      Connecting..
+    <div className={"LobbyRefused"}>
+      <Navigate to={"../"}/>
     </div>
   );
 };
-
-const LobbyRefused = ({reason}: { reason: RefuseReason }) => {
+const LobbyDisconnected = () => {
   return (
-    <div className={"Refused"}>
-      REFUSED:{reason.toString()}
+    <div className={"Disconnected"}>
+      <Navigate to={"../"}/>
     </div>
   );
 };

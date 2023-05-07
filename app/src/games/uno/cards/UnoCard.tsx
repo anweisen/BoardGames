@@ -11,6 +11,7 @@ import {ReactComponent as Card7} from "../../../icons/uno/card-7.svg";
 import {ReactComponent as Card8} from "../../../icons/uno/card-8.svg";
 import {ReactComponent as Card9} from "../../../icons/uno/card-9.svg";
 import {ReactComponent as CardUno} from "../../../icons/uno/card-uno.svg";
+import {ReactComponent as CardDraw2} from "../../../icons/uno/card-draw-2.svg";
 import "./UnoCard.scss";
 
 const getColorName = (color: UnoColorType) => {
@@ -43,7 +44,7 @@ export const UnoCardCore = ({type, color}: { type: UnoCardType, color: UnoColorT
 
     {type === UnoCardType.SKIP && <CardSkip color={fill}/>}
     {type === UnoCardType.REVERSE && <CardReverse color={fill}/>}
-    {type === UnoCardType.DRAW && <CardReverse color={fill}/>}
+    {type === UnoCardType.DRAW && <CardDraw2 color={fill}/>}
 
     {type === UnoCardType.DRAW_PICK && <CardUno color={fill}/>}
     {type === UnoCardType.PICK && <CardUno color={fill}/>}

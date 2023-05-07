@@ -24,7 +24,7 @@
 		position: relative;
 		filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.8));
 
-		$width: 10dvw;
+		$width: 15dvh;
 		width: $width;
 		padding-top: 25px; // extra space when highlighting cards to the top
 		svg {
@@ -58,17 +58,14 @@
 		}
 
 		&.Fade + .UnoCard {
-			//background: blue;
 			animation: follow-left .25s .25s ease-out forwards;
 		}
 
 		&:first-child.Fade + .UnoCard {
-			//background: purple;
 			animation: follow-left-end .25s .25s ease-out forwards;
 		}
 
 		&:has(+ .Fade) {
-			//background: red;
 			animation: follow-right .25s .25s ease-out forwards;
 		}
 
