@@ -1,5 +1,5 @@
-import {MutableRefObject, useState} from "react";
-import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
+import {MutableRefObject, useCallback, useState} from "react";
+import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
 import UnoCardDeck from "./cards/UnoCardDeck";
@@ -22,6 +22,7 @@ export default ({connection, handler, players, selfId}: {
   const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
   const [currentPlayer, setCurrentPlayer] = useState<string>();
   const [effectPayload, setEffectPayload] = useState<UnoEffectPayload>();
+  const [drawCounter, setDrawCounter] = useState<number>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     // window.document.body.requestFullscreen({navigationUI: "hide"});
@@ -39,6 +40,7 @@ export default ({connection, handler, players, selfId}: {
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
   };
   handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
+    setDrawCounter(undefined);
     setClickedCard(undefined);
     setDrawnCard({amount: data.cards.length});
     setOwnedCards(prev => [...prev, ...data.cards]);
@@ -64,6 +66,9 @@ export default ({connection, handler, players, selfId}: {
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] + data.amount}));
   };
   handler.current[SocketMessageType.UNO_EFFECT] = (type, data: UnoEffectPayload) => {
+    if (data.drawCounter)
+      setDrawCounter(data.drawCounter)
+
     setTimeout(() => {
       setEffectPayload(data);
       setTimeout(() => {
@@ -85,10 +90,12 @@ export default ({connection, handler, players, selfId}: {
     setClickedCard({time: Date.now(), index: index, card: ownedCards[index]});
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});
   };
-  const canUse = (card: UnoCardItem) => {
+  const canUse = useCallback((card: UnoCardItem) => {
+    console.log(drawCounter);
+    if (drawCounter) return card.type === UnoCardType.DRAW || card.type === UnoCardType.DRAW_PICK;
     const top = usedCards[usedCards.length - 1];
     return canUseCard(top.color, top.type, card);
-  };
+  }, [drawCounter, usedCards]);
 
   return (
     <>

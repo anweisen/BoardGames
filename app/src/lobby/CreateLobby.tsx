@@ -33,7 +33,7 @@ export default () => {
             const lobbyName = document.getElementById("lobby-name").value;
 
             setClicked(true);
-            setCookie("player_name", playerName);
+            setCookie("player_name", playerName, {maxAge:7*24*60*60});
             fetch(`${config.api}/gateway/create`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({lobbyName: lobbyName, game: "UNO"})})
               .then(value => value.json())
               .then(value => navigate("../" + value.id))

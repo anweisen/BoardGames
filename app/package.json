@@ -1,5 +1,6 @@
 {
   "name": "@board-games/app",
+  "homepage": "https://games.anweisen.net/",
   "version": "0.1.0",
   "author": "anweisen",
   "license": "ISC",

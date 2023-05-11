@@ -18,7 +18,6 @@ export enum SocketMessageType {
   UNO_EFFECT = "UNO_EFFECT",
   UNO_NEXT = "UNO_NEXT",
   UNO_DRAW = "UNO_DRAW",
-  UNO_PICK = "UNO_PICK",
 
   // client to server
   REQUEST_START = "REQUEST_START",

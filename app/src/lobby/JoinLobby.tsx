@@ -26,8 +26,13 @@ export default ({join}: { join: (name: string) => void }) => {
         <div className={"Buttons"}>
           <div className={"Button Cancel"} onClick={() => navigate("../")}>Go Back</div>
           <div className={"Button Confirm"} onClick={() => {
-            setCookie("player_name", "Angelo");
-            join("Angelo");
+            if (clicked) return;
+            // @ts-ignore
+            const playerName = document.getElementById("player-name").value;
+
+            setClicked(true);
+            setCookie("player_name", playerName, {maxAge:7*24*60*60});
+            join(playerName);
           }}>Join Lobby
           </div>
         </div>

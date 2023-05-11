@@ -69,7 +69,7 @@ export class UnoGame extends GameBase {
           if (this.topCard?.type == UnoCardType.DRAW && card.type !== UnoCardType.DRAW)
             return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
 
-        } else if (!canUseCard(this.topCard!!.color, this.topCard!!.type, card))
+        } else if (!this.canUseCardNow(card))
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {card: card});
 
         this.useCard(cardIndex, card, player);
@@ -79,8 +79,8 @@ export class UnoGame extends GameBase {
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
 
         if (this.drawCounter) {
-          this.drawCardsWithPackets(player, this.drawCounter);
           this.drawCounter = 0;
+          this.drawCardsWithPackets(player, this.drawCounter);
         } else {
           this.drawCardsWithPackets(player, 1);
         }
@@ -132,6 +132,10 @@ export class UnoGame extends GameBase {
     this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
   }
 
+  canUseCardNow(card: UnoCardItem): boolean {
+    return canUseCard(this.topCard!!.color, this.topCard!!.type, card);
+  }
+
   distributeCards(amount: number) {
     for (let playerId of this.order) {
       const cards = [];
@@ -147,9 +151,15 @@ export class UnoGame extends GameBase {
     for (let i = 0; i < amount; i++) {
       cards.push(pickRandom(UnoGame.allCards));
     }
-    this.cards.set(player, [...this.cards.get(player)!!, ...cards]);
+    const totalCards = [...this.cards.get(player)!!, ...cards];
+    this.cards.set(player, totalCards);
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM_DRAW, {cards: cards});
     this.broadcastPacket(SocketMessageType.UNO_DRAW, {player: player, amount: amount}, player);
+    
+    if (!totalCards.some(card => this.canUseCardNow(card))) {
+      const nextPlayer = this.nextPlayerInDirection();
+      this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
+    }
   }
 
   pickStartCard(): UnoCardItem {
