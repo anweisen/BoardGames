@@ -79,8 +79,8 @@ export class UnoGame extends GameBase {
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
 
         if (this.drawCounter) {
-          this.drawCounter = 0;
           this.drawCardsWithPackets(player, this.drawCounter);
+          this.drawCounter = 0;
         } else {
           this.drawCardsWithPackets(player, 1);
         }
@@ -155,7 +155,7 @@ export class UnoGame extends GameBase {
     this.cards.set(player, totalCards);
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM_DRAW, {cards: cards});
     this.broadcastPacket(SocketMessageType.UNO_DRAW, {player: player, amount: amount}, player);
-    
+
     if (!totalCards.some(card => this.canUseCardNow(card))) {
       const nextPlayer = this.nextPlayerInDirection();
       this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});

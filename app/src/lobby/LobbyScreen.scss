@@ -25,6 +25,7 @@
 			}
 
 			.Button {
+				user-select: none;
 				margin: auto 0;
 				background: var(--accent-color);
 				padding: 4px 12px;

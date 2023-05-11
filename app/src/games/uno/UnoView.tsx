@@ -40,8 +40,8 @@ export default ({connection, handler, players, selfId}: {
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
   };
   handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
-    setDrawCounter(undefined);
-    setClickedCard(undefined);
+    setDrawCounter(undefined); // the amount of cards which have to be drawn next time, reset -> other than +2/+4 cards can be used
+    setClickedCard(undefined); // reset clicked card to allow client to click new card
     setDrawnCard({amount: data.cards.length});
     setOwnedCards(prev => [...prev, ...data.cards]);
     setTimeout(() => {
@@ -63,6 +63,7 @@ export default ({connection, handler, players, selfId}: {
     setClickedCard(undefined);
   };
   handler.current[SocketMessageType.UNO_DRAW] = (type, data: { player: string, amount: number }) => {
+    setDrawCounter(undefined); // the amount of cards which have to be drawn next time, reset -> other than +2/+4 cards can be used
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] + data.amount}));
   };
   handler.current[SocketMessageType.UNO_EFFECT] = (type, data: UnoEffectPayload) => {
@@ -73,7 +74,7 @@ export default ({connection, handler, players, selfId}: {
       setEffectPayload(data);
       setTimeout(() => {
         setEffectPayload(undefined);
-      }, 3500);
+      }, 2500);
     }, 500);
   };
 
@@ -91,7 +92,6 @@ export default ({connection, handler, players, selfId}: {
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});
   };
   const canUse = useCallback((card: UnoCardItem) => {
-    console.log(drawCounter);
     if (drawCounter) return card.type === UnoCardType.DRAW || card.type === UnoCardType.DRAW_PICK;
     const top = usedCards[usedCards.length - 1];
     return canUseCard(top.color, top.type, card);

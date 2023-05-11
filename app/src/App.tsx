@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useRef, useState} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
 import Overview from "./lobby/Overview";
@@ -8,6 +8,7 @@ import UnoView from "./games/uno/UnoView";
 import JoinLobby from "./lobby/JoinLobby";
 import LobbyLoading from "./lobby/LobbyLoading";
 import config from "./config";
+import {useCookies} from "react-cookie";
 
 export default () => {
   return (
@@ -84,7 +85,7 @@ const LobbyContext = () => {
       sendPacket(type: SocketMessageType, data: object) {
         socket?.send(JSON.stringify({t: type, d: data}));
       }
-    }
+    };
   };
 
   return (
@@ -105,6 +106,14 @@ const LobbyContext = () => {
 };
 
 const LobbyRefused = ({reason}: { reason: RefuseReason }) => {
+  const [cookies, setCookies] = useCookies(["player_name"]);
+
+  useEffect(() => {
+    if (reason === RefuseReason.INVALID_NAME) {
+      setCookies("player_name", undefined);
+    }
+  }, [cookies.player_name, reason]);
+
   return (
     <div className={"LobbyRefused"}>
       <Navigate to={"../"}/>

@@ -14,13 +14,13 @@ export default () => {
       <div className={"Panel"}>
 
         <div className={"InputGroup"}>
-          <span className={"Label"}>Lobby Name</span>
-          <input id={"lobby-name"} className={"Input"} placeholder={"The Lobby Name"}/>
+          <span className={"Label"}>Your Name</span>
+          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name}/>
         </div>
 
         <div className={"InputGroup"}>
-          <span className={"Label"}>Your Name</span>
-          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name}/>
+          <span className={"Label"}>Lobby Name</span>
+          <input id={"lobby-name"} className={"Input"} placeholder={"The Lobby Name"} defaultValue={cookie.player_name ? cookie.player_name + "'s Lobby" : undefined}/>
         </div>
 
         <div className={"Buttons"}>
