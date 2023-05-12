@@ -104,10 +104,10 @@ export default ({connection, handler, players, selfId}: {
           <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
           <span className={"PlayCards"}>
             <UnoUsedCards cards={usedCards}/>
-            <UnoCardDeck drawCard={drawCard}/>
+            <UnoCardDeck drawCard={drawCard} highlight={!ownedCards.some(canUse)}/>
             {effectPayload?.drawCounter && <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span>}
           </span>
-          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={true}/>
+          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={selfId === currentPlayer}/>
         </div>
       </>}
     </>
@@ -138,14 +138,14 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
   const nameFinder = Object.fromEntries(players.map(value => [value.id, value.name]));
   return (
     <>
-      {(players.length === 1) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Top"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
+      {(shiftedOrder.length === 1) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Top"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
                                                        cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
+      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
                                                       cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(players.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[shiftedOrder.length - 1]}
+      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[shiftedOrder.length - 1]}
                                                       name={nameFinder[shiftedOrder[shiftedOrder.length - 1]]}
                                                       cards={othersCardAmount[shiftedOrder[shiftedOrder.length - 1]]}/>}
-      {(players.length >= 3) && <UnoPlayerDisplayWrapperTop currentPlayer={currentPlayer} init={init} players={shiftedOrder
+      {(shiftedOrder.length >= 3) && <UnoPlayerDisplayWrapperTop currentPlayer={currentPlayer} init={init} players={shiftedOrder
         .filter((value, index, array) => index !== 0 && index !== (array.length - 1))
         .map(player => ({name: nameFinder[player], id: player, cards: othersCardAmount[player]}))
       }/>}

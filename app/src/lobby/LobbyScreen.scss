@@ -5,11 +5,21 @@
 	place-items: center;
 
 	.Panel {
-		padding: 3dvh 4dvw;
+		padding: max(3dvh, 15px) max(4dvw, 25px);
 		width: 50dvw;
 		background: var(--background-secondary);
 		border-radius: 25px;
 		box-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
+
+		@media (width <= 1200px) {
+			width: 60dvw;
+		}
+		@media (width <= 1100px) {
+			width: 70dvw;
+		}
+		@media (width <= 1000px) {
+			width: 80dvw;
+		}
 
 		.Header {
 			width: 100%;
@@ -19,9 +29,11 @@
 			flex-direction: row;
 			justify-content: space-between;
 			margin-bottom: 25px;
+			gap: 15px;
 
 			.Title {
-				font-size: 25px;
+				//font-size: 25px;
+				font-size: 1.5rem;
 			}
 
 			.Button {
@@ -31,6 +43,18 @@
 				padding: 4px 12px;
 				border-radius: 7px;
 				cursor: pointer;
+				display: flex;
+				gap: 5px;
+				text-align: center;
+
+				svg {
+					margin: auto;
+				}
+
+				&.Locked {
+					filter: brightness(50%);
+					cursor: not-allowed;
+				}
 			}
 		}
 
@@ -39,11 +63,19 @@
 			gap: 15px;
 			margin-bottom: 10px;
 
+			@media (width <= 800px) {
+				flex-direction: column;
+			}
+
 			.Players {
 				width: 50%;
 				display: flex;
 				flex-direction: column;
 				gap: 10px;
+
+				@media (width <= 800px) {
+					width: auto;
+				}
 
 				.Player {
 					background: rgba(0, 0, 0, .15);

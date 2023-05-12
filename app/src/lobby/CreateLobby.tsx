@@ -15,7 +15,7 @@ export default () => {
 
         <div className={"InputGroup"}>
           <span className={"Label"}>Your Name</span>
-          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name}/>
+          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name ? cookie.player_name : undefined}/>
         </div>
 
         <div className={"InputGroup"}>

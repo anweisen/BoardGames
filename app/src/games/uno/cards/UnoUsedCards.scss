@@ -5,7 +5,7 @@
 	//perspective: 500px;
 	//perspective-origin: 150*.5px -100px; // width=250px
 
-	$width: min(20dvw, 20dvh);
+	$width: min(25dvw, 20dvh);
 	width: $width;
 	height: calc($width*(350/250));
 	margin: 0 calc($width*.25);

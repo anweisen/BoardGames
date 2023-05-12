@@ -10,18 +10,21 @@
 	height: calc($size*(350/250));
 	width: calc($size);
 
+	&.Highlight .Card {
+		filter: drop-shadow(1px -3px 5px rgb(185, 185, 185));
+	}
+
 	.Card {
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		//transition: 1s;
 		border-radius: 10%;
 		box-shadow: 0 0 10px black;
 		background: var(--uno-card-background);
+		transition: filter 1s ease-out;
 
 		@for $i from 1 through 10 {
 			&:nth-child(#{$i}) {
-				//top: #{($i - 1) * 6px + -20};
 				top: #{($i - 1) * 2.5%};
 				transform: rotateX(55deg) rotateZ(-30deg + (random(30)-15)*.1);
 			}

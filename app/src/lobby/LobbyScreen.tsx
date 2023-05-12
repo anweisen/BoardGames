@@ -1,5 +1,6 @@
 import {InitLobbyPayload, PlayerInfo, SocketMessageType} from "@board-games/core";
 import {MutableRefObject} from "react";
+import {MdLock} from "react-icons/md";
 import {Connection} from "../App";
 import "./LobbyScreen.scss";
 
@@ -9,7 +10,11 @@ export default ({payload, players, playerName, connection}: { payload: InitLobby
       <div className={"Panel"}>
         <div className={"Header"}>
           <div className={"Title"}>{payload.lobbyName}</div>
-          <div className={"Button Start"} onClick={event => connection.current.sendPacket(SocketMessageType.REQUEST_START, {})}>Start Game</div>
+          <div className={"Button Start" + (!payload.permissions || players.length === 0 ? " Locked" : "")}
+               onClick={!payload.permissions ? undefined : _ => connection.current.sendPacket(SocketMessageType.REQUEST_START, {})}>
+            {!payload.permissions && <MdLock/>}
+            Start Game
+          </div>
         </div>
         <div className={"Content"}>
           <div className={"Players"}>

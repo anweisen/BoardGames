@@ -107,6 +107,7 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
   sendPacket(socket, SocketMessageType.INIT_LOBBY, {
     lobbyId: lobby.id,
     lobbyName: lobby.name,
+    permissions: lobby.participants[playerId].role === ParticipantRole.ADMIN,
     game: lobby.type,
     playerId: playerId,
     players: Object.values(lobby.participants).filter(participant => participant.id !== playerId).map(participant => ({id: participant.id, name: participant.name}))

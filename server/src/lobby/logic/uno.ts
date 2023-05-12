@@ -1,7 +1,7 @@
 import * as ws from "ws";
 import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection} from "@board-games/core";
 import {GameBase} from "./game";
-import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
+import {Lobby, Participant, ParticipantRole, pickRandom, PlayerId, shuffle} from "../models";
 
 const createAllCards = () => {
   const cards: UnoCardItem[] = [];
@@ -35,6 +35,8 @@ export class UnoGame extends GameBase {
     switch (type) {
       case SocketMessageType.REQUEST_START:
         if (this.ingame) return;
+        if (this.order.length < 2) return;
+        if (this.getLobby().participants[player].role != ParticipantRole.ADMIN) return;
 
         this.ingame = true;
         this.broadcastPacket(SocketMessageType.PREPARE_START, {});

@@ -57,7 +57,7 @@
 			display: flex;
 			justify-content: space-evenly;
 			gap: 10px;
-			
+
 			@media (max-width: 450px) {
 				flex-direction: column;
 			}
@@ -73,9 +73,13 @@
 				flex-direction: column;
 				cursor: pointer;
 				user-select: none;
+				font-size: 16px;
 
 				@media (max-width: 450px) {
 					width: auto;
+					padding: 10px 20px;
+					font-size: 15px;
+					border-radius: 10px;
 				}
 
 				&.Cancel {

@@ -4,11 +4,11 @@ import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason
 import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
-import UnoView from "./games/uno/UnoView";
 import JoinLobby from "./lobby/JoinLobby";
 import LobbyLoading from "./lobby/LobbyLoading";
 import config from "./config";
 import {useCookies} from "react-cookie";
+import UnoView from "./games/uno/UnoView";
 
 export default () => {
   return (
@@ -88,6 +88,10 @@ const LobbyContext = () => {
     };
   };
 
+  const game = !initPayload ? undefined : (
+    initPayload.game === GameType.UNO ? <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/> : undefined
+  );
+
   return (
     <>
       {refused ? <LobbyRefused reason={refused.reason}/> :
@@ -97,20 +101,18 @@ const LobbyContext = () => {
           }}/> :
           (!connectionRef.current && false ? <LobbyDisconnected/> :
             (!initPayload || !playerName ? <LobbyLoading/> :
-              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef}/> :
-                  (initPayload.game === GameType.UNO && <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/>)
-              ))))
+              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef}/> : game))))
       }
     </>
   );
 };
 
 const LobbyRefused = ({reason}: { reason: RefuseReason }) => {
-  const [cookies, setCookies] = useCookies(["player_name"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["player_name"]);
 
   useEffect(() => {
     if (reason === RefuseReason.INVALID_NAME) {
-      setCookies("player_name", undefined);
+      removeCookie("player_name");
     }
   }, [cookies.player_name, reason]);
 

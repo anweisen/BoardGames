@@ -10,9 +10,6 @@
 	//transform-style: preserve-3d;
 	//perspective: 1000px;
 
-	&.Waiting {
-	}
-
 	.UnoCard {
 		//transform: rotateX(5deg);
 		transition: margin-left 0.1s cubic-bezier(0, 0.5, 0.75, 1),
@@ -43,14 +40,6 @@
 		&:hover {
 			transform: translateY(-$width*.05) rotate(1.5deg);
 			filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.9));
-		}
-
-		&.Locked {
-			filter: brightness(70%);
-		}
-
-		&:not(.Locked) {
-			margin-bottom: 20px;
 		}
 
 		&.Fade {
@@ -114,5 +103,18 @@
 				margin-right: -$width*.5;
 			}
 		}
+	}
+
+	&.Current .UnoCard {
+		&.Usable {
+			margin-bottom: 20px;
+		}
+
+		&:not(.Usable) {
+			filter: brightness(70%);
+		}
+	}
+	&:not(.Current) {
+		filter: brightness(45%);
 	}
 }

@@ -30,8 +30,8 @@ export interface Participant {
 }
 
 export enum ParticipantRole {
-  ADMIN,
   NONE,
+  ADMIN,
 }
 
 export const randomFrom = (chars: string, length: number) => {

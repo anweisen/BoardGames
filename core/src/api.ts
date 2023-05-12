@@ -51,6 +51,7 @@ export interface InitLobbyPayload {
   lobbyId: string;
   lobbyName: string;
   game: GameType;
+  permissions: boolean;
   playerId: string;
   players: PlayerInfo[];
 }
