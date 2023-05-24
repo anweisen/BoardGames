@@ -1,14 +1,14 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
+import {useCookies} from "react-cookie";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
 import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
 import JoinLobby from "./lobby/JoinLobby";
 import LobbyLoading from "./lobby/LobbyLoading";
-import config from "./config";
-import {useCookies} from "react-cookie";
 import UnoView from "./games/uno/UnoView";
+import config from "./config";
 
 export default () => {
   return (
@@ -24,6 +24,8 @@ export default () => {
 
 export interface Connection {
   sendPacket(type: SocketMessageType, data: object): void;
+
+  intervalId?: any;
 }
 
 export type SocketHandler = (type: SocketMessageType, data: any) => void;
@@ -74,6 +76,7 @@ const LobbyContext = () => {
     };
     socket.onclose = event => {
       console.log("WS: closed", event.code, event.reason);
+      clearInterval(connectionRef.current?.intervalId);
       // @ts-ignore
       connectionRef.current = undefined;
       setSocket(undefined);
@@ -86,6 +89,9 @@ const LobbyContext = () => {
         socket?.send(JSON.stringify({t: type, d: data}));
       }
     };
+    connectionRef.current.intervalId = setInterval(con => {
+      con.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
+    }, 15_000, connectionRef.current);
   };
 
   const game = !initPayload ? undefined : (

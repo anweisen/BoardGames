@@ -81,7 +81,7 @@ const initGameInstance = (type: GameType, lobbyId: LobbyId): Game => {
 
 const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
   socket.on("open", () => {
-    // resume
+    // resume?
   });
   socket.on("message", (data, isBinary) => {
     const text = data.toString();
@@ -89,6 +89,15 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
 
     try {
       const json: SocketMessage = JSON.parse(text);
+
+      switch (json.t) {
+        case SocketMessageType.HEARTBEAT:
+          sendPacket(socket, SocketMessageType.ACK_HEARTBEAT, json.d)
+          return;
+
+        default: break;
+      }
+
       lobby.game.handleMessage(json.t, json.d, playerId);
     } catch (ex) {
       sendPacket(socket, SocketMessageType.INVALID_MESSAGE, {});

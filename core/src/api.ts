@@ -1,5 +1,6 @@
 export enum SocketMessageType {
   // server to client
+  HEARTBEAT = "HEARTBEAT",
   INVALID_MESSAGE = "INVALID_MESSAGE",
   REFUSE_LOBBY = "REFUSE_LOBBY",
   INIT_LOBBY = "INIT_LOBBY",
@@ -20,6 +21,7 @@ export enum SocketMessageType {
   UNO_DRAW = "UNO_DRAW",
 
   // client to server
+  ACK_HEARTBEAT = "ACK_HEARTBEAT",
   REQUEST_START = "REQUEST_START",
 }
 
