@@ -5,12 +5,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
 
 :root {
-	--accent-color: #3179d7;
-	--accent-color-effect: #1761be;
+	--primary: #3179d7;
+	--primary-effect: #1761be;
+	--secondary: #3f3e48;
+	--secondary-effect: #37363f;
 
 	//--background: rgb(35, 35, 42);
 	--background: linear-gradient(180deg, rgb(35, 35, 42) -30%, rgb(25, 25, 32) 150%);
 	--background-secondary: rgb(38, 38, 48);
+	--background-focus: rgb(44, 44, 53);
+
+	--uno-red: #D72600;
+	--uno-blue: #0956BF;
+	--uno-green: #379711;
+	--uno-yellow: #ECD407;
+	--uno-black: #171614;
+	--uno-card-background: white;
 }
 
 * {
@@ -39,6 +49,14 @@ a {
 
 input:focus, textarea:focus, select:focus, button {
 	outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+	transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+	background-color: transparent !important;
 }
 
 #root {

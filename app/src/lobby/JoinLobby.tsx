@@ -20,7 +20,7 @@ export default ({join}: { join: (name: string) => void }) => {
       <div className={"Panel"}>
         <div className={"InputGroup"}>
           <span className={"Label"}>Your Name</span>
-          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name}/>
+          <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name} spellCheck={false}/>
         </div>
 
         <div className={"Buttons"}>

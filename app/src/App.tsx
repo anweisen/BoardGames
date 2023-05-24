@@ -15,7 +15,7 @@ export default () => {
     <BrowserRouter>
       <Routes>
         <Route path={"/"} element={<Overview/>}/>
-        <Route path={"/new"} element={<CreateLobby/>}/>
+        <Route path={"/new/:game?"} element={<CreateLobby/>}/>
         <Route path={"/:id"} element={<LobbyContext/>}/>;
       </Routes>
     </BrowserRouter>

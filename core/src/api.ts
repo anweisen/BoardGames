@@ -38,7 +38,7 @@ export enum RefuseReason {
 }
 
 export enum GameType {
-  UNO = "UNO"
+  UNO = "uno"
 }
 
 export interface LobbyItem {

@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {MdOutlineDangerous, MdPublic} from "react-icons/md";
 import {LobbyItem} from "@board-games/core";
-import "./Overview.scss";
 import config from "../config";
+import "./Overview.scss";
 
 export default () => {
   const reloadTime = 3;
@@ -20,10 +20,10 @@ export default () => {
   });
   useEffect(() => {
     if (reload === 0) {
-      fetch(`${config.api}/lobbies`)
+      fetch(`${config.api}/lobbies`, {method: "GET", headers: {"Content-Type": "application/json"}})
         .then(value => value.json())
         .then(value => setLobbies(value))
-        .then(value => setReload(reloadTime));
+        .then(_ => setReload(reloadTime));
     }
   }, [reload]);
 
@@ -32,7 +32,7 @@ export default () => {
       <Category title={"Games"} count={1}>
         <GameCard/>
       </Category>
-      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>} count={lobbies?.length|| 0}>
+      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>} count={lobbies?.length || 0}>
         {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
           <div className={"Empty"}>
             <MdOutlineDangerous/>
@@ -46,7 +46,7 @@ export default () => {
   );
 }
 
-const Category = ({title, info, children, count}: { title: string, info?: React.ReactNode, children: React.ReactNode, count:number }) => {
+const Category = ({title, info, children, count}: { title: string, info?: React.ReactNode, children: React.ReactNode, count: number }) => {
   return (
     <div className={"Category"}>
       <div className={"Title"}>
