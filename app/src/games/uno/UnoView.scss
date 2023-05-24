@@ -1,4 +1,48 @@
 
+.UnoWinner {
+	top: 0;
+	user-select: none;
+	overflow: hidden;
+
+	width: 100dvw;
+	height: 100dvh;
+
+	position: absolute;
+	background: rgba(0, 0, 0, .45);
+
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+
+	svg {
+		font-size: 150px;
+	}
+	p {
+		font-size: 40px;
+		font-family: "Poppins", sans-serif;
+	}
+	.Button {
+		padding: 5px 20px;
+		background: rgba(255, 255, 255, .85);
+		border-radius: 12px;
+		margin-top: 35px;
+		font-size: 20px;
+		color: black;
+		font-family: "Poppins", sans-serif;
+		cursor: pointer;
+	}
+
+	animation: win .5s ease-in-out;
+
+	@keyframes win {
+		from {
+			opacity: 0;
+		}
+	}
+}
+
 .UnoView {
 	user-select: none;
 	overflow: hidden;
@@ -55,6 +99,101 @@
 				10%, 90% {
 					opacity: 1;
 					transform: translate(-50%, -50%);
+				}
+			}
+		}
+
+		.PickColor {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform-style: preserve-3d;
+			perspective: 500px;
+			transform: translate(-50%, -60%);
+
+			span {
+				display: grid;
+				gap: 0px;
+
+				transform: rotateX(45deg) rotateZ(45deg);
+
+				$size: 125px;
+				$drop: 5.5px;
+				$dropFade: 4px;
+				$hoverScale: 8%;
+				animation: pick-color-fade-in .3s ease;
+
+				&.Hide {
+					animation: pick-color-fade-out .3s ease forwards;
+				}
+
+				@keyframes pick-color-fade-in {
+					from {
+						opacity: 0;
+						margin-bottom: -20px;
+					}
+					50% {
+						opacity: 1;
+					}
+				}
+				@keyframes pick-color-fade-out {
+					50% {
+						opacity: 1;
+					}
+					to {
+						opacity: 0;
+						margin-bottom: -20px;
+					}
+				}
+
+				div {
+					width: $size;
+					height: $size;
+					transition: transform .2s ease;
+				}
+
+				div:nth-child(1) {
+					grid-area: 1 / 1;
+					background: var(--uno-green);
+					filter: drop-shadow($drop $drop $dropFade var(--uno-green));
+					border-top-left-radius: 100%;
+
+					&:hover {
+						transform: scale(100% + $hoverScale) translate(-$hoverScale/2, -$hoverScale/2);
+					}
+				}
+
+				div:nth-child(2) {
+					grid-area: 1 / 2;
+					background: var(--uno-yellow);
+					filter: drop-shadow($drop $drop $dropFade var(--uno-yellow));
+					border-top-right-radius: 100%;
+
+					&:hover {
+						transform: scale(100% + $hoverScale) translate($hoverScale/2, -$hoverScale/2);
+					}
+				}
+
+				div:nth-child(3) {
+					grid-area: 2 / 1;
+					background: var(--uno-blue);
+					filter: drop-shadow($drop $drop $dropFade var(--uno-blue));
+					border-bottom-left-radius: 100%;
+
+					&:hover {
+						transform: scale(100% + $hoverScale) translate(-$hoverScale/2, $hoverScale/2);
+					}
+				}
+
+				div:nth-child(4) {
+					grid-area: 2 / 2;
+					background: var(--uno-red);
+					filter: drop-shadow($drop $drop $dropFade var(--uno-red));
+					border-bottom-right-radius: 100%;
+
+					&:hover {
+						transform: scale(100% + $hoverScale) translate($hoverScale/2, $hoverScale/2);
+					}
 				}
 			}
 		}

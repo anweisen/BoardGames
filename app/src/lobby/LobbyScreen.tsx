@@ -4,12 +4,18 @@ import {MdLock} from "react-icons/md";
 import {Connection} from "../App";
 import "./LobbyScreen.scss";
 
-export default ({payload, players, playerName, connection}: { payload: InitLobbyPayload, players: PlayerInfo[], playerName: string, connection: MutableRefObject<Connection> }) => {
+export default ({payload, players, playerName, connection, ping}: {
+  payload: InitLobbyPayload,
+  players: PlayerInfo[],
+  playerName: string,
+  connection: MutableRefObject<Connection>,
+  ping: number | undefined
+}) => {
   return (
     <div className={"LobbyScreen"}>
       <div className={"Panel"}>
         <div className={"Header"}>
-          <div className={"Title"}>{payload.lobbyName}</div>
+          <div className={"Title"}>{payload.lobbyName}<p className={"Ping"}>{ping || 0}ms</p></div>
           <div className={"Button Start" + (!payload.permissions || players.length === 0 ? " Locked" : "")}
                onClick={!payload.permissions ? undefined : _ => connection.current.sendPacket(SocketMessageType.REQUEST_START, {})}>
             {!payload.permissions && <MdLock/>}

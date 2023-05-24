@@ -1,6 +1,7 @@
 export interface UnoCardItem {
   type: UnoCardType;
   color: UnoColorType;
+  picked?: UnoColorType;
 }
 
 export enum UnoCardType {

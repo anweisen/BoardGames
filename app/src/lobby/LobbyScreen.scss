@@ -34,6 +34,16 @@
 			.Title {
 				//font-size: 25px;
 				font-size: 1.5rem;
+				display: inline-flex;
+				gap: 20px;
+
+			}
+
+			.Ping {
+				color: rgba(255, 255, 255, .45);
+				//margin: auto 0 .1rem 0;
+				margin: auto 0;
+				font-size: 1rem;
 			}
 
 			.Button {

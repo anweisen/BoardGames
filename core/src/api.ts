@@ -8,6 +8,7 @@ export enum SocketMessageType {
   LEAVE = "LEAVE",
   PREPARE_START = "PREPARE_START",
   INIT_GAME = "INIT_GAME",
+  END_GAME = "END_GAME",
 
   // both ways
   // CHANGE_LOBBY_NAME = "CHANGE_LOBBY_NAME",
@@ -19,6 +20,8 @@ export enum SocketMessageType {
   UNO_EFFECT = "UNO_EFFECT",
   UNO_NEXT = "UNO_NEXT",
   UNO_DRAW = "UNO_DRAW",
+  UNO_PICK = "UNO_PICK",
+  UNO_WIN = "UNO_WIN",
 
   // client to server
   ACK_HEARTBEAT = "ACK_HEARTBEAT",

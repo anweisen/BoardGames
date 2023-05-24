@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useEffect, useRef, useState} from "react";
+import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
 import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
@@ -25,6 +25,8 @@ export default () => {
 export interface Connection {
   sendPacket(type: SocketMessageType, data: object): void;
 
+  close(): void;
+
   intervalId?: any;
 }
 
@@ -40,9 +42,14 @@ const LobbyContext = () => {
   const [players, setPlayers] = useState<PlayerInfo[]>([]);
   const [inLobby, setInLobby] = useState(true);
   const [playerName, setPlayerName] = useState<string>();
+  const [ping, setPing] = useState<number>();
   const connectionRef = useRef<Connection>() as MutableRefObject<Connection>;
   const handlerRef = useRef<SocketHandlers>({}) as MutableRefObject<SocketHandlers>;
 
+  handlerRef.current[SocketMessageType.ACK_HEARTBEAT] = (type, data: { at: number }) => {
+    console.log("ACK", ping, "ms");
+    setPing(Date.now() - data.at);
+  };
   handlerRef.current[SocketMessageType.INIT_LOBBY] = (type, data: InitLobbyPayload) => {
     setInitPayload(data);
     setPlayers(data.players);
@@ -61,6 +68,10 @@ const LobbyContext = () => {
   };
 
   const connectSocket = (url: string) => {
+    if (connectionRef.current) {
+      connectionRef.current.close();
+    }
+
     console.log("Connecting to", url);
     const socket = new WebSocket(url);
     socket.onmessage = event => {
@@ -73,6 +84,10 @@ const LobbyContext = () => {
     };
     socket.onopen = event => {
       console.log("WS: open");
+      connectionRef.current.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
+      connectionRef.current.intervalId = setInterval(con => {
+        con.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
+      }, 15_000, connectionRef.current);
     };
     socket.onclose = event => {
       console.log("WS: closed", event.code, event.reason);
@@ -87,15 +102,19 @@ const LobbyContext = () => {
     connectionRef.current = {
       sendPacket(type: SocketMessageType, data: object) {
         socket?.send(JSON.stringify({t: type, d: data}));
+      },
+      close() {
+        socket?.close();
       }
     };
-    connectionRef.current.intervalId = setInterval(con => {
-      con.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
-    }, 15_000, connectionRef.current);
   };
 
+  useCallback(() => {
+    console.log("ACK", ping, "ms");
+  }, [ping]);
+
   const game = !initPayload ? undefined : (
-    initPayload.game === GameType.UNO ? <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId}/> : undefined
+    initPayload.game === GameType.UNO ? <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} playerName={playerName} setInLobby={setInLobby}/> : undefined
   );
 
   return (
@@ -107,7 +126,7 @@ const LobbyContext = () => {
           }}/> :
           (!connectionRef.current && false ? <LobbyDisconnected/> :
             (!initPayload || !playerName ? <LobbyLoading/> :
-              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef}/> : game))))
+              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef} ping={ping}/> : game))))
       }
     </>
   );
