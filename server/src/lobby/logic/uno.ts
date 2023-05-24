@@ -36,7 +36,7 @@ export class UnoGame extends GameBase {
     switch (type) {
       case SocketMessageType.REQUEST_START:
         if (this.ingame) return;
-        // if (this.order.length < 2) return;
+        if (this.order.length < 2) return;
         if (this.getLobby().participants[player].role != ParticipantRole.ADMIN) return;
 
         this.ingame = true;
