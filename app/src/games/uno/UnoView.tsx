@@ -30,12 +30,13 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   const [won, setWon] = useState<string>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
-    // window.document.body.requestFullscreen({navigationUI: "hide"});
+    console.log("Initializing UNO..");
     setOwnedCards(data.cards);
     setUsedCards([data.topCard]);
     setOrder(data.order);
     setCurrentPlayer(data.order[0]);
     setOthersCardAmount(Object.fromEntries(data.order.filter(cur => cur != selfId).map(cur => [cur, data.cards.length])));
+    console.log("Initialized UNO!");
   };
   handler.current[SocketMessageType.UNO_NEXT] = (type, data: { player: string }) => {
     setCurrentPlayer(data.player);

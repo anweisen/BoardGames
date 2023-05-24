@@ -47,7 +47,6 @@ const LobbyContext = () => {
   const handlerRef = useRef<SocketHandlers>({}) as MutableRefObject<SocketHandlers>;
 
   handlerRef.current[SocketMessageType.ACK_HEARTBEAT] = (type, data: { at: number }) => {
-    console.log("ACK", ping, "ms");
     setPing(Date.now() - data.at);
   };
   handlerRef.current[SocketMessageType.INIT_LOBBY] = (type, data: InitLobbyPayload) => {
@@ -108,10 +107,6 @@ const LobbyContext = () => {
       }
     };
   };
-
-  useCallback(() => {
-    console.log("ACK", ping, "ms");
-  }, [ping]);
 
   const game = !initPayload ? undefined : (
     initPayload.game === GameType.UNO ? <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} playerName={playerName} setInLobby={setInLobby}/> : undefined

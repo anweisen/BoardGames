@@ -44,7 +44,7 @@ export class UnoGame extends GameBase {
 
         shuffle(this.order);
         this.topCard = this.pickStartCard();
-        this.distributeCards(1);
+        this.distributeCards(7);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {
@@ -87,6 +87,7 @@ export class UnoGame extends GameBase {
 
         this.pickedColor = data.color as UnoColorType;
         this.broadcastPacket(SocketMessageType.UNO_PICK, {player: player, color: this.pickedColor});
+        this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: this.nextPlayerInDirection()});
         return;
     }
   }
