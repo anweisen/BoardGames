@@ -1,6 +1,7 @@
 {
   "short_name": "BoardGames",
   "name": "Angelos BoardGames",
+  "orientation": "landscape-primary",
   "icons": [
     {
       "src": "favicon.ico",
