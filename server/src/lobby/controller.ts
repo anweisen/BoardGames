@@ -94,8 +94,6 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
         case SocketMessageType.HEARTBEAT:
           sendPacket(socket, SocketMessageType.ACK_HEARTBEAT, json.d)
           return;
-
-        default: break;
       }
 
       lobby.game.handleMessage(json.t, json.d, playerId);
