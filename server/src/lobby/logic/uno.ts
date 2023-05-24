@@ -1,4 +1,3 @@
-import * as ws from "ws";
 import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection} from "@board-games/core";
 import {GameBase} from "./game";
 import {Lobby, Participant, ParticipantRole, pickRandom, PlayerId, shuffle} from "../models";
@@ -95,7 +94,7 @@ export class UnoGame extends GameBase {
     this.broadcastPacket(SocketMessageType.LEAVE, {id: playerId});
   }
 
-  handleJoin(participant: Participant, socket: ws): void {
+  handleJoin(participant: Participant): void {
     this.order.push(participant.id);
     this.broadcastPacket(SocketMessageType.JOIN, {id: participant.id, name: participant.name}, participant.id);
   }

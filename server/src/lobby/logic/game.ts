@@ -41,5 +41,5 @@ export abstract class GameBase implements Game {
 
   abstract handleClose(playerId: PlayerId): void;
 
-  abstract handleJoin(participant: Participant, socket: ws): void;
+  abstract handleJoin(participant: Participant): void;
 }
