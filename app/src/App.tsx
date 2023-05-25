@@ -1,4 +1,4 @@
-import React, {MutableRefObject, useCallback, useEffect, useRef, useState} from "react";
+import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
 import {useCookies} from "react-cookie";
 import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
@@ -90,8 +90,7 @@ const LobbyContext = () => {
     };
     socket.onclose = event => {
       console.log("WS: closed", event.code, event.reason);
-      clearInterval(connectionRef.current?.intervalId);
-      // @ts-ignore
+      clearInterval(connectionRef.current?.intervalId); // @ts-ignore
       connectionRef.current = undefined;
       setSocket(undefined);
       setClosed(event.code);
@@ -119,7 +118,7 @@ const LobbyContext = () => {
             setPlayerName(name);
             connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`);
           }}/> :
-          (!connectionRef.current && false ? <LobbyDisconnected/> :
+          (!connectionRef.current ? <LobbyDisconnected/> :
             (!initPayload || !playerName ? <LobbyLoading/> :
               (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef} ping={ping}/> : game))))
       }

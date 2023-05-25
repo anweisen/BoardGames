@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
+import {useCookies} from "react-cookie";
 import "./CreateJoinLobby.scss";
 
 export default ({join}: { join: (name: string) => void }) => {
