@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {MdOutlineDangerous, MdPublic} from "react-icons/md";
 import {LobbyItem} from "@board-games/core";
+import {ReactComponent as SvgUno} from "../icons/uno/icon-uno.svg";
 import config from "../config";
 import "./Overview.scss";
 
@@ -30,7 +31,7 @@ export default () => {
   return (
     <div className={"Overview"}>
       <Category title={"Games"} count={1}>
-        <GameCard/>
+        <GameCard name={"uno"} Svg={SvgUno} color={"uno-red"}/>
       </Category>
       <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>} count={lobbies?.length || 0}>
         {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
@@ -62,11 +63,11 @@ const Category = ({title, info, children, count}: { title: string, info?: React.
     </div>
   );
 };
-const GameCard = () => {
+const GameCard = ({name, color, Svg}:{ name: string, color: string, Svg: React.FunctionComponent }) => {
   return (
-    <div className={"GameCard"}>
-
-    </div>
+    <Link className={"GameCard"} to={`/new/${name}`} style={{background: `var(--${color})`}}>
+      {<Svg/>}
+    </Link>
   );
 };
 const LobbyCard = ({lobby}: { lobby: LobbyItem }) => {

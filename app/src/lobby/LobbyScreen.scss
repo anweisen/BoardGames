@@ -8,7 +8,7 @@
 		padding: max(3dvh, 15px) max(4dvw, 25px);
 		width: 50dvw;
 		background: var(--background-secondary);
-		border-radius: 25px;
+		border-radius: 15px;
 		box-shadow: 1px 1px 3px rgba(0, 0, 0, .25);
 
 		@media (width <= 1200px) {
@@ -68,7 +68,7 @@
 				}
 
 				&:hover {
-					transform: translateY(-5xp);
+					transform: translateY(2px);
 				}
 			}
 		}

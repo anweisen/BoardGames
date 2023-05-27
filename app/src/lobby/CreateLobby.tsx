@@ -20,6 +20,10 @@ const CreateLobbyPanel = () => {
     <div className={"CreateLobby"}>
       <div className={"Panel"}>
 
+        {/* <div className={"InputGroup"}>
+          <span className={"Label"}>Game</span>
+        </div> */}
+
         <div className={"InputGroup"}>
           <span className={"Label"}>Your Name</span>
           <input id={"player-name"} className={"Input"} placeholder={"What's your name?"} defaultValue={cookie.player_name ? cookie.player_name : undefined} spellCheck={false}/>

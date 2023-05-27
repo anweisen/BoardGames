@@ -102,6 +102,22 @@
 					//transform: translateY(1px);
 				}
 			}
+
+			.GameCard {
+				padding: 10px 15px;
+				border-radius: 20px;
+				width: 125px;
+				filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
+
+				svg {
+					width: 100%;
+					height: auto;
+					transition: transform .2s ease;
+				}
+				&:hover svg {
+					transform: scale(1.05);
+				}
+			}
 		}
 
 	}
