@@ -113,6 +113,7 @@
 			transform-style: preserve-3d;
 			perspective: 500px;
 			transform: translate(-50%, -60%);
+			z-index: 100;
 
 			span {
 				display: grid;
@@ -206,7 +207,7 @@
 			top: 60%;
 			left: 50%;
 			transform: translate(-50%, -50%) rotateX(60deg) rotateZ(0deg);
-			width: 200%;
+			width: 185%;
 			height: 200%;
 			display: flex;
 			align-items: center;
@@ -217,8 +218,12 @@
 			z-index: 1;
 			color: rgba(255, 255, 255, 0.15);
 
+			div {
+				height: 50%;
+			}
+
 			svg {
-				height: 300px;
+				height: 100%;
 				width: auto;
 			}
 
