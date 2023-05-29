@@ -67,8 +67,12 @@
 	}
 
 	&.Current .Info .Image {
-		box-shadow: 0 0 10px rgba(0, 0, 0, .8);
-		color: rgba(255, 255, 255, .45);;
+		box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+		color: rgba(255, 255, 255, .45);
+
+		svg, img {
+			color: rgba(255, 255, 255, .6);
+		}
 	}
 
 	.Info {
@@ -83,7 +87,8 @@
 			height: 65px;
 			background: rgba(0, 0, 0, .15);
 			border: rgba(0, 0, 0, .2) 1px solid;
-			border-radius: 22%;
+			border-radius: 25%;
+			box-shadow: 0 0 1px rgba(0, 0, 0, .5);
 
 			svg, img {
 				width: 100%;

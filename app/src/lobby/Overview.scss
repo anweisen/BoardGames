@@ -5,10 +5,10 @@
 	flex-direction: column;
 	gap: 50px;
 	
-	@media (max-width: 1000px) {
+	@media (width <= 1000px) {
 		padding: 5dvh 12.5dvw;
 	}
-	@media (max-width: 750px) {
+	@media (width <= 750px) {
 		padding: 5dvh 7.5dvw;
 	}
 
@@ -48,6 +48,7 @@
 				display: flex;
 				flex-direction: row;
 				gap: 10px;
+				font-family: "Roboto", sans-serif;
 
 				color: rgba(255, 255, 255, 0.4);
 
@@ -58,7 +59,11 @@
 
 				.Time {
 					margin: auto 0;
-					font-size: 16px;
+					font-size: 17px;
+
+					&::after {
+						content: "s";
+					}
 				}
 			}
 

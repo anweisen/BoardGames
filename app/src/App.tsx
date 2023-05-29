@@ -86,7 +86,7 @@ const LobbyContext = () => {
       connectionRef.current.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
       connectionRef.current.intervalId = setInterval(con => {
         con.sendPacket(SocketMessageType.HEARTBEAT, {at: Date.now()});
-      }, 15_000, connectionRef.current);
+      }, 10_000, connectionRef.current);
     };
     socket.onclose = event => {
       console.log("WS: closed", event.code, event.reason);

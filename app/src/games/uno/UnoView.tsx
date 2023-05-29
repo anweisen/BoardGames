@@ -1,5 +1,5 @@
 import React, {MutableRefObject, useCallback, useEffect, useState} from "react";
-import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoColorType, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
+import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoColorType, UnoDirection, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
 import {FaCrown} from "react-icons/fa";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
@@ -23,6 +23,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   const [drawnCard, setDrawnCard] = useState<{ amount: number }>();
   const [order, setOrder] = useState<string[]>();
   const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
+  const [direction, setDirection] = useState<UnoDirection>();
   const [currentPlayer, setCurrentPlayer] = useState<string>();
   const [effectPayload, setEffectPayload] = useState<UnoEffectPayload>();
   const [drawCounter, setDrawCounter] = useState<number>();
@@ -36,6 +37,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
     setOrder(data.order);
     setCurrentPlayer(data.order[0]);
     setOthersCardAmount(Object.fromEntries(data.order.filter(cur => cur != selfId).map(cur => [cur, data.cards.length])));
+    setDirection(data.direction);
     console.log("Initialized UNO!");
   };
   handler.current[SocketMessageType.UNO_NEXT] = (type, data: { player: string }) => {
@@ -84,8 +86,8 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
     }, 500);
   };
   handler.current[SocketMessageType.UNO_EFFECT] = (type, data: UnoEffectPayload) => {
-    if (data.drawCounter)
-      setDrawCounter(data.drawCounter);
+    if (data.drawCounter) setDrawCounter(data.drawCounter);
+    if (data.changeDirection) setDirection(data.changeDirection);
 
     setTimeout(() => {
       setEffectPayload(data);
@@ -116,18 +118,19 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   };
   const canUse = useCallback((card: UnoCardItem) => {
     const top = usedCards[usedCards.length - 1];
-    if (drawCounter) return card.type === UnoCardType.DRAW_PICK || (top.picked === card.color || top.picked === undefined) && card.type === UnoCardType.DRAW;
+    if (drawCounter) return card.type === UnoCardType.DRAW_PICK || ((top.picked === card.color || top.picked === undefined) && card.type === UnoCardType.DRAW);
     return canUseCard(top.picked || top.color, top.type, card);
   }, [drawCounter, usedCards]);
 
   return (
     <>
-      {!usedCards || !ownedCards || !order || !othersCardAmount || !currentPlayer ? <LobbyLoading/> : <>
+      {!usedCards || !ownedCards || !order || !othersCardAmount || !currentPlayer || direction === undefined ? <LobbyLoading/> : <>
         <div className={"UnoView"}>
           <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
           <span className={"PlayCards"}>
             <UnoUsedCards cards={usedCards}/>
             <UnoCardDeck drawCard={drawCard} highlight={!ownedCards.some(canUse)}/>
+            <DirectionArrow direction={direction}/>
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
           </span>
@@ -136,6 +139,37 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
         {won && <WinScreen name={won === selfId ? playerName : Object.fromEntries(players.map(value => [value.id, value.name]))[won]} toLobby={() => setInLobby(true)}/>}
       </>}
     </>
+  );
+};
+
+const DirectionArrow = ({direction}: { direction: UnoDirection }) => {
+  return (
+    <div className={"DirectionArrows " + (direction === UnoDirection.CLOCKWISE ? "Clockwise" : "CounterClockwise")}>
+      <div className={"Left"}>
+        {direction === UnoDirection.CLOCKWISE ?
+          <svg viewBox="254.007 93.631 44.657 164.115" width="44.657" height="164.115">
+            <path fill="currentColor"
+                  d="M 281.456 93.631 C 290.822 105.22 316.155 167.248 279.22 236.771 L 293.329 243.1 L 259.104 257.746 L 254.007 226.484 L 267.709 232.78 C 292.687 191.682 293.579 138.075 273.366 102.039 L 281.456 93.631 Z"
+                  transform="matrix(-1, 0, 0, -1, 552.670532, 351.377014)"></path>
+          </svg> :
+          <svg viewBox="254.007 93.631 44.657 164.115" width="44.657" height="164.115">
+            <path fill="currentColor"
+                  d="M 281.456 257.746 C 290.822 246.157 316.155 184.129 279.22 114.606 L 293.329 108.277 L 259.104 93.631 L 254.007 124.893 L 267.709 118.597 C 292.687 159.695 293.579 213.302 273.366 249.338 L 281.456 257.746 Z"
+                  transform="matrix(-1, 0, 0, -1, 552.670532, 351.377014)"></path>
+          </svg>}
+      </div>
+      <div className={"Right"}>
+        {direction === UnoDirection.CLOCKWISE ?
+          <svg viewBox="254.007 93.631 44.657 164.115" width="44.657" height="164.115">
+            <path fill="currentColor"
+                  d="M 281.456 93.631 C 290.822 105.22 316.155 167.248 279.22 236.771 L 293.329 243.1 L 259.104 257.746 L 254.007 226.484 L 267.709 232.78 C 292.687 191.682 293.579 138.075 273.366 102.039 L 281.456 93.631 Z"></path>
+          </svg> :
+          <svg viewBox="254.007 93.631 44.657 164.115" width="44.657" height="164.115">
+            <path fill="currentColor"
+                  d="M 281.456 257.746 C 290.822 246.157 316.155 184.129 279.22 114.606 L 293.329 108.277 L 259.104 93.631 L 254.007 124.893 L 267.709 118.597 C 292.687 159.695 293.579 213.302 273.366 249.338 L 281.456 257.746 Z"></path>
+          </svg>}
+      </div>
+    </div>
   );
 };
 
@@ -189,10 +223,10 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
   order: string[],
   othersCardAmount: Record<string, number>
 }) => {
-  // 1  ->        top
-  // 2  -> right,      left
-  // 3  -> right, top, left
-  // 4+ -> right, wrap,left
+  // 1  ->       top
+  // 2  -> left,      right
+  // 3  -> left, top, right
+  // 4+ -> left, wrap,right
   const selfOrderIndex = order.indexOf(selfId); // = number of players before self
   const shiftedOrder: string[] = [];
   for (let i = selfOrderIndex + 1; i < order.length; i++) {
@@ -207,11 +241,11 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
     <>
       {(shiftedOrder.length === 1) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Top"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
                                                             cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
-                                                           cards={othersCardAmount[shiftedOrder[0]]}/>}
-      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[shiftedOrder.length - 1]}
+      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Right"} init={init} id={shiftedOrder[shiftedOrder.length - 1]}
                                                            name={nameFinder[shiftedOrder[shiftedOrder.length - 1]]}
                                                            cards={othersCardAmount[shiftedOrder[shiftedOrder.length - 1]]}/>}
+      {(shiftedOrder.length >= 2) && <UnoPlayerDisplayCore currentPlayer={currentPlayer} position={"Left"} init={init} id={shiftedOrder[0]} name={nameFinder[shiftedOrder[0]]}
+                                                           cards={othersCardAmount[shiftedOrder[0]]}/>}
       {(shiftedOrder.length >= 3) && <UnoPlayerDisplayWrapperTop currentPlayer={currentPlayer} init={init} players={shiftedOrder
         .filter((value, index, array) => index !== 0 && index !== (array.length - 1))
         .map(player => ({name: nameFinder[player], id: player, cards: othersCardAmount[player]}))

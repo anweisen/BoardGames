@@ -33,7 +33,7 @@ export default () => {
       <Category title={"Games"} count={1}>
         <GameCard name={"uno"} Svg={SvgUno} color={"uno-red"}/>
       </Category>
-      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}s</div>} count={lobbies?.length || 0}>
+      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}</div>} count={lobbies?.length || 0}>
         {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
           <div className={"Empty"}>
             <MdOutlineDangerous/>

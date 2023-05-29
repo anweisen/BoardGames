@@ -5,7 +5,7 @@
 	place-items: center;
 
 	.Panel {
-		padding: max(3dvh, 15px) max(3.5dvw, 25px);
+		padding: clamp(15px, 3dvh, 25px) clamp(25px, 3.5dvw, 75px);
 		width: 50dvw;
 		background: var(--background-secondary);
 		border-radius: 15px;
@@ -32,16 +32,13 @@
 			gap: 15px;
 
 			.Title {
-				//font-size: 25px;
 				font-size: 1.4rem;
 				display: inline-flex;
 				gap: 15px;
-
 			}
 
 			.Ping {
 				color: rgba(255, 255, 255, .45);
-				//margin: auto 0 .1rem 0;
 				margin: auto 0;
 				font-size: .9rem;
 			}
@@ -56,7 +53,7 @@
 				display: flex;
 				gap: 5px;
 				text-align: center;
-				transition: transform .2s ease;
+				transition: transform .15s ease;
 
 				svg {
 					margin: auto;
@@ -68,7 +65,7 @@
 				}
 
 				&:hover {
-					transform: translateY(2px);
+					transform: translateY(1.5px);
 				}
 			}
 		}

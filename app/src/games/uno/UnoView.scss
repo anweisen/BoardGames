@@ -19,10 +19,12 @@
 	svg {
 		font-size: 150px;
 	}
+
 	p {
 		font-size: 40px;
 		font-family: "Poppins", sans-serif;
 	}
+
 	.Button {
 		padding: 5px 20px;
 		background: rgba(255, 255, 255, .85);
@@ -53,7 +55,7 @@
 	display: grid;
 	place-items: center;
 	grid-template-columns: 15% auto 15%;
-	grid-template-rows: 20% auto 30%;
+	grid-template-rows: 20% auto 25%;
 
 	.UnoPlayerDisplay.Top, .UnoPlayerDisplayWrapper.Top {
 		grid-area: 1 / 2;
@@ -73,6 +75,7 @@
 		position: relative;
 
 		.UnoCardDeck {
+			z-index: 10;
 			position: absolute;
 			left: 95%;
 			top: -20%;
@@ -113,7 +116,7 @@
 
 			span {
 				display: grid;
-				gap: 0px;
+				gap: 0;
 
 				transform: rotateX(45deg) rotateZ(45deg);
 
@@ -159,7 +162,7 @@
 					border-top-left-radius: 100%;
 
 					&:hover {
-						transform: scale(100% + $hoverScale) translate(-$hoverScale/2, -$hoverScale/2);
+						transform: scale(100% + $hoverScale) translate(-$hoverScale*.5, -$hoverScale*.5);
 					}
 				}
 
@@ -194,6 +197,53 @@
 					&:hover {
 						transform: scale(100% + $hoverScale) translate($hoverScale/2, $hoverScale/2);
 					}
+				}
+			}
+		}
+
+		.DirectionArrows {
+			position: absolute;
+			top: 60%;
+			left: 50%;
+			transform: translate(-50%, -50%) rotateX(60deg) rotateZ(0deg);
+			width: 200%;
+			height: 200%;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			transform-style: preserve-3d;
+			perspective: 400px;
+			perspective-origin: 50% 0;
+			z-index: 1;
+			color: rgba(255, 255, 255, 0.15);
+
+			svg {
+				height: 300px;
+				width: auto;
+			}
+
+			opacity: 0;
+
+			&.Clockwise {
+				animation: rotate-arrows-clockwise 30s infinite linear;
+				transition: opacity .35s linear;
+				opacity: 1;
+			}
+
+			&.CounterClockwise {
+				animation: rotate-arrows-counterclockwise 30s infinite linear;
+				transition: opacity .35s linear;
+				opacity: 1;
+			}
+
+			@keyframes rotate-arrows-clockwise {
+				to {
+					transform: translate(-50%, -50%) rotateX(60deg) rotateZ(360deg);
+				}
+			}
+			@keyframes rotate-arrows-counterclockwise {
+				from {
+					transform: translate(-50%, -50%) rotateX(60deg) rotateZ(360deg);
 				}
 			}
 		}
