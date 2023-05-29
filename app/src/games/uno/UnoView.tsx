@@ -130,7 +130,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
           <span className={"PlayCards"}>
             <DirectionArrows direction={direction}/>
             <UnoUsedCards cards={usedCards}/>
-            <UnoCardDeck drawCard={drawCard} highlight={!ownedCards.some(canUse)}/>
+            <UnoCardDeck drawCard={drawCard} highlight={selfId === currentPlayer && !ownedCards.some(canUse)}/>
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
           </span>
