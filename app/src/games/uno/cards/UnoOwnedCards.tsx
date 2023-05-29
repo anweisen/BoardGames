@@ -13,12 +13,14 @@ export default ({cards, canUse, clicked, drawn, useCard, myTurn}: {
   return (
     // @ts-ignore
     <div className={"UnoOwnedCards" + (myTurn ? " Current" : "")} style={{"--drawn": drawn}}>
-      {cards.map((card, index, array) => (
-        <div key={index + "-" + card.type + "-" + card.color}
-             className={"UnoCard" + (index === clicked ? " Fade" : "") + (drawn && index >= (array.length - drawn) ? " Drawn" : "") + (canUse(card) ? " Usable" : "")}
-             onClick={canUse(card) ? () => useCard(index) : undefined}>
-          <UnoCardCore type={card.type} color={card.color}/>
-        </div>))}
+      {cards.map((card, index) => ({...card, index: index}))
+        .sort((a, b) => a.color - b.color)
+        .map((card, index, array) => (
+          <div key={`${index}-${card.index}-${card.color}-${card.type}`}
+               className={"UnoCard" + (card.index === clicked ? " Fade" : "") + (drawn && card.index >= (array.length - drawn) ? " Drawn" : "") + (canUse(card) ? " Usable" : "")}
+               onClick={canUse(card) ? () => useCard(card.index) : undefined}>
+            <UnoCardCore type={card.type} color={card.color}/>
+          </div>))}
     </div>
   );
 }
