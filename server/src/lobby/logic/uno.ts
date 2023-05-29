@@ -55,7 +55,7 @@ export class UnoGame extends GameBase {
               cards: cards
             });
           }
-        }, 25);
+        }, 250);
         break;
       case SocketMessageType.UNO_USE:
         if (!this.cards.has(player))

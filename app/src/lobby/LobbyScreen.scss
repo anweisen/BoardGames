@@ -5,7 +5,7 @@
 	place-items: center;
 
 	.Panel {
-		padding: max(3dvh, 15px) max(4dvw, 25px);
+		padding: max(3dvh, 15px) max(3.5 dvw, 25px);
 		width: 50dvw;
 		background: var(--background-secondary);
 		border-radius: 15px;
@@ -33,9 +33,9 @@
 
 			.Title {
 				//font-size: 25px;
-				font-size: 1.5rem;
+				font-size: 1.4rem;
 				display: inline-flex;
-				gap: 20px;
+				gap: 15px;
 
 			}
 
@@ -43,7 +43,7 @@
 				color: rgba(255, 255, 255, .45);
 				//margin: auto 0 .1rem 0;
 				margin: auto 0;
-				font-size: 1rem;
+				font-size: .9rem;
 			}
 
 			.Button {
@@ -96,8 +96,12 @@
 					background: rgba(0, 0, 0, .15);
 					color: rgba(255, 255, 255, .85);
 					padding: 10px 30px;
-					border-radius: 10px;
+					border-radius: 7px;
 					font-family: Quicksand, sans-serif;
+
+					&:first-child {
+						font-weight: 500;
+					}
 				}
 			}
 

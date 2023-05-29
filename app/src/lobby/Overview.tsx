@@ -49,9 +49,9 @@ export default () => {
 
 const Category = ({title, info, children, count}: { title: string, info?: React.ReactNode, children: React.ReactNode, count: number }) => {
   return (
-    <div className={"Category"}>
+    <div className={"Category " + title}>
       <div className={"Title"}>
-        <div className={"Left"}>{title} <p>({count})</p></div>
+        <div className={"Left"}>{title} <p>{count}</p></div>
         <div className={"Right"}>
           {info}
           {/*<MdKeyboardArrowDown/>*/}

@@ -30,8 +30,17 @@
 
 				p {
 					margin: auto 0;
-					font-size: 16px;
+					font-size: 15px;
 					color: rgba(255, 255, 255, 0.45);
+					display: flex;
+					gap: 1px;
+
+					&::before {
+						content: "(";
+					}
+					&::after {
+						content: ")";
+					}
 				}
 			}
 
@@ -49,7 +58,7 @@
 
 				.Time {
 					margin: auto 0;
-					font-size: 20px;
+					font-size: 16px;
 				}
 			}
 
@@ -105,10 +114,10 @@
 
 			.GameCard {
 				padding: 10px 15px;
-				border-radius: 20px;
+				border-radius: 15px;
 				width: 125px;
 				filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
-
+				
 				svg {
 					width: 100%;
 					height: auto;
@@ -117,7 +126,27 @@
 				&:hover svg {
 					transform: scale(1.05);
 				}
+
+				animation: game-fade-in .25s cubic-bezier(.4, .75, .64, .99) backwards;
+
+				@keyframes game-fade-in {
+					from {
+						opacity: 0;
+						transform: translateX(-10px);
+					}
+				}
+
+				@for $i from 1 through 10 {
+					&:nth-child(#{$i}) {
+						animation-delay: ($i - 1) * .2s;
+					}
+				}
 			}
+		}
+
+		&.Games .Cards {
+			flex-direction: row;
+			flex-wrap: wrap;
 		}
 
 	}
