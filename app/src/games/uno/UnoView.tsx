@@ -86,8 +86,8 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
     }, 500);
   };
   handler.current[SocketMessageType.UNO_EFFECT] = (type, data: UnoEffectPayload) => {
-    if (data.drawCounter) setDrawCounter(data.drawCounter);
-    if (data.changeDirection) setDirection(data.changeDirection);
+    if (data.drawCounter !== undefined) setDrawCounter(data.drawCounter);
+    if (data.changeDirection !== undefined) setDirection(data.changeDirection);
 
     setTimeout(() => {
       setEffectPayload(data);
