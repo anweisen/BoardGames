@@ -3,13 +3,13 @@ import {UnoCardItem} from "@board-games/core";
 import {UnoCardCore} from "./UnoCard";
 import "./UnoUsedCards.scss";
 
-export default ({cards}: { cards: UnoCardItem[] }) => {
+export default ({cards, usedCardsCounter}: { cards: UnoCardItem[], usedCardsCounter: number }) => {
   const states = useRef<Record<number, CSSProperties>>({});
 
   return (
     <div className={"UnoUsedCards"}>
       {cards.map((card, index) => (
-        <div key={index + "-" + card.type + "-" + card.color} className={"UnoCard"} style={properties(states, index)}>
+        <div key={`${index}-${usedCardsCounter}-${card.color}-${card.type}`} className={"UnoCard"} style={properties(states, index)}>
           <UnoCardCore type={card.type} color={card.picked || card.color}/>
         </div>
       ))}

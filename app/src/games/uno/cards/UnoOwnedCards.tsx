@@ -17,7 +17,7 @@ export default ({cards, canUse, clicked, drawn, useCard, myTurn}: {
         .sort((a, b) => a.color - b.color)
         .map((card, index, array) => (
           <div key={`${index}-${card.index}-${card.color}-${card.type}`}
-               className={"UnoCard" + (card.index === clicked ? " Fade" : "") + (drawn && card.index >= (array.length - drawn) ? " Drawn" : "") + (canUse(card) ? " Usable" : "")}
+               className={"UnoCard" + (card.index === clicked ? " Fade" : "") + (drawn && card.index >= (array.length - drawn) ? " Drawn Drawn" + (array.length + drawn - 1 - card.index) : "") + (canUse(card) ? " Usable" : "")}
                onClick={canUse(card) ? () => useCard(card.index) : undefined}>
             <UnoCardCore type={card.type} color={card.color}/>
           </div>))}

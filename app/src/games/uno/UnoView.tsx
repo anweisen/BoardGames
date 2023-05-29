@@ -18,6 +18,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   setInLobby: (state: boolean) => void
 }) => {
   const [usedCards, setUsedCards] = useState<UnoCardItem[]>([]);
+  const [usedCardsCounter, setUsedCardsCounter] = useState(0);
   const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
   const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card?: UnoCardItem }>();
   const [drawnCard, setDrawnCard] = useState<{ amount: number }>();
@@ -44,6 +45,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
     setCurrentPlayer(data.player);
   };
   handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, card: UnoCardItem, cards: number }) => {
+    setUsedCardsCounter(prev => prev + 1);
     setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.card]);
     setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
   };
@@ -60,6 +62,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
+      setUsedCardsCounter(prev => prev + 1);
       setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card!!]);
 
     }, Math.max(250 - age, 0));
@@ -129,7 +132,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
           <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
           <span className={"PlayCards"}>
             <DirectionArrows direction={direction}/>
-            <UnoUsedCards cards={usedCards}/>
+            <UnoUsedCards cards={usedCards} usedCardsCounter={usedCardsCounter}/>
             <UnoCardDeck drawCard={drawCard} highlight={selfId === currentPlayer && !ownedCards.some(canUse)}/>
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}

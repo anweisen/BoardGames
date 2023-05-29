@@ -61,9 +61,9 @@
 		&.Drawn {
 			animation: spawn-own-card .3s ease backwards;
 
-			@for $i from 1 through 10 {
-				&:nth-last-of-type(#{$i}) {
-					animation-delay: calc(.125s * (var(--drawn) - $i));
+			@for $i from 1 through 100 {
+				&.Drawn#{$i} {
+					animation-delay: calc(.125s * min(7, (var(--drawn) - $i)));
 				}
 			}
 		}
@@ -114,6 +114,7 @@
 			filter: brightness(70%);
 		}
 	}
+
 	&:not(.Current) {
 		filter: brightness(45%);
 	}
