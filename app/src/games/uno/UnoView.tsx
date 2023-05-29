@@ -128,9 +128,9 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
         <div className={"UnoView"}>
           <UnoPlayerDisplays init={usedCards.length <= 1} selfId={selfId} players={players} order={order} othersCardAmount={othersCardAmount} currentPlayer={currentPlayer}/>
           <span className={"PlayCards"}>
+            <DirectionArrows direction={direction}/>
             <UnoUsedCards cards={usedCards}/>
             <UnoCardDeck drawCard={drawCard} highlight={!ownedCards.some(canUse)}/>
-            <DirectionArrow direction={direction}/>
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
           </span>
@@ -142,7 +142,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   );
 };
 
-const DirectionArrow = ({direction}: { direction: UnoDirection }) => {
+const DirectionArrows = ({direction}: { direction: UnoDirection }) => {
   return (
     <div className={"DirectionArrows " + (direction === UnoDirection.CLOCKWISE ? "Clockwise" : "CounterClockwise")}>
       <div className={"Left"}>
