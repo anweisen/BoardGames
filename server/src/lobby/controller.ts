@@ -1,13 +1,14 @@
 import * as ws from "ws";
 import {Lobby, LobbyId, LobbyState, Participant, ParticipantRole, PlayerId, randomLobbyId, randomPlayerId} from "./models";
-import {GameType, LobbyItem, SocketMessage, SocketMessageType} from "@board-games/core";
+import {GameType, LobbyInfo, SocketMessage, SocketMessageType} from "@board-games/core";
 import {UnoGame} from "./logic/uno";
 import {Game} from "./logic/game";
+import gateway from "../routes/gateway";
 
 const lobbies: Map<LobbyId, Lobby> = new Map<LobbyId, Lobby>();
 
 export const getLobbyItems = () => {
-  const arr: LobbyItem[] = [];
+  const arr: LobbyInfo[] = [];
   for (let lobby of lobbies.values()) {
     if (lobby.game.ingame) continue;
     arr.push({
@@ -116,6 +117,7 @@ const setupConnection = (socket: ws, lobby: Lobby, playerId: PlayerId) => {
     lobbyName: lobby.name,
     permissions: lobby.participants[playerId].role === ParticipantRole.ADMIN,
     game: lobby.type,
+    settings: lobby.game.settings,
     playerId: playerId,
     players: Object.values(lobby.participants).filter(participant => participant.id !== playerId).map(participant => ({id: participant.id, name: participant.name}))
   });

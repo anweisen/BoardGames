@@ -1,10 +1,11 @@
 import * as ws from "ws";
 import {SocketMessageType} from "@board-games/core";
-import {Lobby, Participant, PlayerId} from "../models";
+import {Lobby, Participant, ParticipantRole, PlayerId} from "../models";
 import {sendPacket} from "../controller";
 
 export interface Game {
-  ingame: boolean;
+  readonly ingame: boolean;
+  readonly settings: object;
 
   handleMessage(type: SocketMessageType, data: object, player: PlayerId): void;
 
@@ -16,6 +17,8 @@ export interface Game {
 export abstract class GameBase implements Game {
 
   public ingame = false;
+  public abstract settings: any;
+
   protected readonly getLobby: () => Lobby;
 
   protected constructor(getLobby: () => Lobby) {
@@ -35,6 +38,10 @@ export abstract class GameBase implements Game {
 
   retrieveSocket(playerId: PlayerId): ws {
     return this.getLobby().participants[playerId].socket;
+  }
+
+  hasPermissions(player: string): boolean {
+    return this.getLobby().participants[player].role === ParticipantRole.ADMIN;
   }
 
   abstract handleMessage(type: SocketMessageType, data: object, player: PlayerId): void

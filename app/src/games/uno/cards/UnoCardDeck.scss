@@ -7,8 +7,21 @@
 	//height: 350px;
 	//width: 250px;
 	$size: min(10vw, 14vh);
-	height: calc($size*(350/250));
+	height: calc($size * (350 / 250));
 	width: calc($size);
+
+
+	&.Highlight {
+		animation: highlight-deck 1.5s infinite ease-out;
+		@keyframes highlight-deck {
+			20%, 60% {
+				transform: scale(1.025) translateY(-1.25%);
+			}
+			40%, 80% {
+				transform: none;
+			}
+		}
+	}
 
 	&.Highlight .Card {
 		filter: drop-shadow(1px -3px 5px rgb(185, 185, 185));

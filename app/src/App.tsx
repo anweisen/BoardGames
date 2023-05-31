@@ -38,6 +38,7 @@ const LobbyContext = () => {
   const [socket, setSocket] = useState<WebSocket>();
   const [closed, setClosed] = useState<any>();
   const [initPayload, setInitPayload] = useState<InitLobbyPayload>();
+  const [settings, setSettings] = useState<object>();
   const [refused, setRefused] = useState<RefuseLobbyPayload>();
   const [players, setPlayers] = useState<PlayerInfo[]>([]);
   const [inLobby, setInLobby] = useState(true);
@@ -50,8 +51,9 @@ const LobbyContext = () => {
     setPing(Date.now() - data.at);
   };
   handlerRef.current[SocketMessageType.INIT_LOBBY] = (type, data: InitLobbyPayload) => {
-    setInitPayload(data);
     setPlayers(data.players);
+    setSettings(data.settings);
+    setInitPayload(data);
   };
   handlerRef.current[SocketMessageType.REFUSE_LOBBY] = (type, data: RefuseLobbyPayload) => {
     setRefused(data);
@@ -62,9 +64,12 @@ const LobbyContext = () => {
   handlerRef.current[SocketMessageType.LEAVE] = (type, data: PlayerInfo) => {
     setPlayers(prev => prev.filter(cur => cur.id !== data.id));
   };
-  handlerRef.current[SocketMessageType.PREPARE_START] = (type, data) => {
+  handlerRef.current[SocketMessageType.PRE_START] = (type, data) => {
     setInLobby(false);
   };
+  handlerRef.current[SocketMessageType.UPDATE_SETTINGS] = (type, data) => {
+    setSettings(data);
+  }
 
   const connectSocket = (url: string) => {
     if (connectionRef.current) {
@@ -108,7 +113,8 @@ const LobbyContext = () => {
   };
 
   const game = !initPayload ? undefined : (
-    initPayload.game === GameType.UNO ? <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} playerName={playerName} setInLobby={setInLobby}/> : undefined
+    initPayload.game === GameType.UNO ?
+      <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} playerName={playerName} setInLobby={setInLobby}/> : undefined
   );
 
   return (
@@ -119,8 +125,8 @@ const LobbyContext = () => {
             connectSocket(`${config.ws}/gateway/join/${params.id}?name=${encodeURIComponent(name)}`);
           }}/> :
           (!connectionRef.current ? <LobbyDisconnected/> :
-            (!initPayload || !playerName ? <LobbyLoading/> :
-              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef} ping={ping}/> : game))))
+            (!initPayload || !playerName || !settings ? <LobbyLoading/> :
+              (inLobby ? <LobbyScreen payload={initPayload} players={players} playerName={playerName} connection={connectionRef} ping={ping} settings={settings} permissions={initPayload.permissions}/> : game))))
       }
     </>
   );

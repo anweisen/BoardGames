@@ -3,8 +3,8 @@
   "author": "anweisen",
   "license": "ISC",
   "workspaces": [
-    "app",
     "core",
+    "app",
     "server"
   ],
   "devDependencies": {

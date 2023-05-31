@@ -228,20 +228,19 @@
 				width: auto;
 			}
 
-			opacity: 0;
-
 			&.Clockwise {
-				animation: rotate-arrows-clockwise 30s infinite linear;
-				transition: opacity .35s linear;
-				opacity: 1;
+				animation: rotate-arrows-show .5s ease-out, rotate-arrows-clockwise 30s infinite linear;
 			}
 
 			&.CounterClockwise {
-				animation: rotate-arrows-counterclockwise 30s infinite linear;
-				transition: opacity .35s linear;
-				opacity: 1;
+				animation: rotate-arrows-show .5s ease-out, rotate-arrows-counterclockwise 30s infinite linear;
 			}
 
+			@keyframes rotate-arrows-show {
+				from {
+					opacity: 0;
+				}
+			}
 			@keyframes rotate-arrows-clockwise {
 				to {
 					transform: translate(-50%, -50%) rotateX(60deg) rotateZ(360deg);

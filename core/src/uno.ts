@@ -17,7 +17,6 @@ export enum UnoCardType {
   REVERSE = 10,
   SKIP = 11,
   DRAW = 12,
-
   PICK = 100,
   DRAW_PICK = 101
 }
@@ -47,6 +46,11 @@ export interface UnoInitPayload {
   order: string[],
   topCard: UnoCardItem,
   cards: UnoCardItem[],
+}
+
+export interface UnoSettings {
+  cards: number;
+  stacking: number;
 }
 
 export interface UnoEffectPayload {

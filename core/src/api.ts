@@ -1,18 +1,17 @@
 export enum SocketMessageType {
   // server to client
-  HEARTBEAT = "HEARTBEAT",
+  ACK_HEARTBEAT = "ACK_HEARTBEAT",
   INVALID_MESSAGE = "INVALID_MESSAGE",
   REFUSE_LOBBY = "REFUSE_LOBBY",
   INIT_LOBBY = "INIT_LOBBY",
   JOIN = "JOIN",
   LEAVE = "LEAVE",
-  PREPARE_START = "PREPARE_START",
+  PRE_START = "PRE_START",
   INIT_GAME = "INIT_GAME",
-  END_GAME = "END_GAME",
 
   // both ways
-  // CHANGE_LOBBY_NAME = "CHANGE_LOBBY_NAME",
-  // CHANGE_PLAYER_NAME = "CHANGE_PLAYER_NAME",
+  UPDATE_SETTINGS = "UPDATE_SETTINGS",
+  CHANGE_NAME = "CHANGE_NAME",
   UNO_USE = "UNO_USE",
   UNO_CONFIRM = "UNO_CONFIRM",
   UNO_CONFIRM_DRAW = "UNO_CONFIRM_DRAW",
@@ -24,7 +23,7 @@ export enum SocketMessageType {
   UNO_WIN = "UNO_WIN",
 
   // client to server
-  ACK_HEARTBEAT = "ACK_HEARTBEAT",
+  HEARTBEAT = "HEARTBEAT",
   REQUEST_START = "REQUEST_START",
 }
 
@@ -46,7 +45,7 @@ export enum GameType {
   UNO = "uno"
 }
 
-export interface LobbyItem {
+export interface LobbyInfo {
   id: string,
   name: string,
   game: GameType,
@@ -59,6 +58,7 @@ export interface InitLobbyPayload {
   permissions: boolean;
   playerId: string;
   players: PlayerInfo[];
+  settings: object;
 }
 export interface PlayerInfo {
   id: string;

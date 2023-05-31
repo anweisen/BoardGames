@@ -5,10 +5,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
 
 :root {
-	--primary: #3179d7;
+	--primary: #0d78De;
 	--primary-effect: #1761be;
 	--secondary: #3f3e48;
 	--secondary-effect: #37363f;
+
+	--text-primary: #ffffff;
+	--text-secondary: rgba(255, 255, 255, .4);
 
 	//--background: rgb(35, 35, 42);
 	--background: linear-gradient(180deg, rgb(35, 35, 42) -30%, rgb(25, 25, 32) 150%);

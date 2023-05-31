@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {MdOutlineDangerous, MdPublic} from "react-icons/md";
-import {LobbyItem} from "@board-games/core";
+import {LobbyInfo} from "@board-games/core";
 import {ReactComponent as SvgUno} from "../icons/uno/icon-uno.svg";
 import config from "../config";
 import "./Overview.scss";
@@ -9,7 +9,7 @@ import "./Overview.scss";
 export default () => {
   const reloadTime = 3;
   const [reload, setReload] = useState(0);
-  const [lobbies, setLobbies] = useState<LobbyItem[]>();
+  const [lobbies, setLobbies] = useState<LobbyInfo[]>();
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -70,7 +70,7 @@ const GameCard = ({name, color, Svg}:{ name: string, color: string, Svg: React.F
     </Link>
   );
 };
-const LobbyCard = ({lobby}: { lobby: LobbyItem }) => {
+const LobbyCard = ({lobby}: { lobby: LobbyInfo }) => {
   return (
     <Link to={`/${lobby.id}`} className={"LobbyCard"}>
       <MdPublic/>

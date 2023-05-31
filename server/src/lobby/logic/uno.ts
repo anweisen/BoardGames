@@ -1,6 +1,6 @@
-import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection, UnoSpecialTypes} from "@board-games/core";
+import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection, UnoSettings, UnoSpecialTypes} from "@board-games/core";
 import {AssertionError} from "assert";
-import {Lobby, Participant, ParticipantRole, pickRandom, PlayerId, shuffle} from "../models";
+import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
 import {GameBase} from "./game";
 
 const createAllCards = () => {
@@ -20,6 +20,9 @@ const createAllCards = () => {
 
 export class UnoGame extends GameBase {
   static allCards = shuffle(createAllCards());
+  static defaultSettings: UnoSettings = {cards: 7, stacking: 0};
+
+  public settings: UnoSettings = UnoGame.defaultSettings;
   private order: PlayerId[] = [];
   private cards: Map<PlayerId, UnoCardItem[]> = new Map();
   private direction: UnoDirection = UnoDirection.CLOCKWISE;
@@ -34,17 +37,25 @@ export class UnoGame extends GameBase {
 
   handleMessage(type: SocketMessageType, data: any, player: PlayerId): void {
     switch (type) {
+      case SocketMessageType.UPDATE_SETTINGS:
+        if (this.ingame) return;
+        if (!this.hasPermissions(player)) return;
+
+        const settings = data as UnoSettings;
+        this.settings = settings;
+        this.broadcastPacket(SocketMessageType.UPDATE_SETTINGS, settings);
+        break;
       case SocketMessageType.REQUEST_START:
         if (this.ingame) return;
         if (this.order.length < 2) return;
-        if (this.getLobby().participants[player].role != ParticipantRole.ADMIN) return;
+        if (!this.hasPermissions(player)) return;
 
         this.ingame = true;
-        this.broadcastPacket(SocketMessageType.PREPARE_START, {});
+        this.broadcastPacket(SocketMessageType.PRE_START, {});
 
         shuffle(this.order);
         this.topCard = this.pickStartCard();
-        this.distributeCards(7);
+        this.distributeCards(this.settings.cards);
 
         setTimeout(() => {
           for (let [playerId, cards] of this.cards) {
@@ -55,7 +66,7 @@ export class UnoGame extends GameBase {
               cards: cards
             });
           }
-        }, 250);
+        }, 500);
         break;
       case SocketMessageType.UNO_USE:
         if (!this.cards.has(player))
