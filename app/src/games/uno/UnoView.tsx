@@ -1,5 +1,5 @@
 import React, {MutableRefObject, useCallback, useEffect, useState} from "react";
-import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoColorType, UnoDirection, UnoEffectPayload, UnoInitPayload} from "@board-games/core";
+import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoColorType, UnoDirection, UnoEffectPayload, UnoInitPayload, UnoSettings} from "@board-games/core";
 import {FaCrown} from "react-icons/fa";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
@@ -9,9 +9,10 @@ import LobbyLoading from "../../lobby/LobbyLoading";
 import {Connection, SocketHandlers} from "../../App";
 import "./UnoView.scss";
 
-export default ({connection, handler, players, selfId, playerName, setInLobby}: {
+export default ({connection, handler, settings, players, selfId, playerName, setInLobby}: {
   connection: MutableRefObject<Connection>,
   handler: MutableRefObject<SocketHandlers>,
+  settings: UnoSettings,
   players: PlayerInfo[],
   selfId: string,
   playerName: string | undefined,
@@ -44,10 +45,14 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   handler.current[SocketMessageType.UNO_NEXT] = (type, data: { player: string }) => {
     setCurrentPlayer(data.player);
   };
-  handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, card: UnoCardItem, cards: number }) => {
-    setUsedCardsCounter(prev => prev + 1);
-    setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.card]);
-    setOthersCardAmount(prev => ({...prev, [data.player]: prev!![data.player] - 1}));
+  handler.current[SocketMessageType.UNO_USE] = (type, data: { player: string, usedCard: UnoCardItem, usedAmount: number, left: number }) => {
+    setOthersCardAmount(prev => ({...prev, [data.player]: data.left}));
+    for (let i = 0; i < data.usedAmount; i++) {
+      setTimeout(() => {
+        setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), data.usedCard]);
+        setUsedCardsCounter(prev => prev + 1);
+      }, i * 250);
+    }
   };
   handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
     setDrawCounter(undefined); // the amount of cards which have to be drawn next time, reset -> other than +2/+4 cards can be used
@@ -58,19 +63,23 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
       setDrawnCard(undefined);
     }, 1000);
   };
-  handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[], card: UnoCardItem }) => {
+  handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[], card: UnoCardItem, amount: number }) => {
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
-      setUsedCardsCounter(prev => prev + 1);
-      setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card!!]);
+      for (let i = 0; i < data.amount; i++) {
+        setTimeout(() => {
+          setUsedCards(prev => [...prev.filter((cur, index) => index > prev.length - 5), clickedCard!!.card!!]);
+          setUsedCardsCounter(prev => prev + 1);
+        }, i * 250);
+      }
 
     }, Math.max(250 - age, 0));
     setTimeout(() => {
       setOwnedCards(data.cards);
       setClickedCard(undefined);
 
-      if (data.card.type === UnoCardType.DRAW_PICK || data.card.type === UnoCardType.PICK)
+      if (data.card.type === UnoCardType.PICK_DRAW_4 || data.card.type === UnoCardType.PICK)
         setPickingColor(true);
     }, Math.max(500 - age, 0));
   };
@@ -121,8 +130,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
   };
   const canUse = useCallback((card: UnoCardItem) => {
     const top = usedCards[usedCards.length - 1];
-    if (drawCounter) return card.type === UnoCardType.DRAW_PICK || ((top.picked === card.color || top.picked === undefined) && card.type === UnoCardType.DRAW);
-    return canUseCard(top.picked || top.color, top.type, card);
+    return canUseCard(settings, top.picked || top.color, top.type, drawCounter, card);
   }, [drawCounter, usedCards]);
 
   return (
@@ -137,7 +145,7 @@ export default ({connection, handler, players, selfId, playerName, setInLobby}: 
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
           </span>
-          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={selfId === currentPlayer}/>
+          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={selfId === currentPlayer && !pickingColor}/>
         </div>
         {won && <WinScreen name={won === selfId ? playerName : Object.fromEntries(players.map(value => [value.id, value.name]))[won]} toLobby={() => setInLobby(true)}/>}
       </>}

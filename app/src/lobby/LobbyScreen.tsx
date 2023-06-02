@@ -76,14 +76,14 @@ export const SettingSlider = ({permissions, min, max, defaultValue, updateValue}
 };
 export const SettingSwitch = ({permissions, values, defaultValue, updateValue}: {
   permissions: boolean,
-  values: string[],
+  values: Record<number, string>,
   defaultValue: number,
   updateValue: (value: number) => void,
 }) => {
   return (<>
     {!permissions ? <div className={"Display"}>{values[defaultValue]}</div> : <div className={"SwitchGroup"}>
-      {values.map((value, index) => (
-        <div key={index} className={"Switch" + (index === defaultValue ? " Current" : "")} onClick={_ => updateValue(index)}>{value}</div>
+      {Object.entries(values).map(([key, value]) => (
+        <div key={key} className={"Switch" + (parseInt(key) === defaultValue ? " Current" : "")} onClick={_ => updateValue(parseInt(key))}>{value}</div>
       ))}
     </div>}
   </>);

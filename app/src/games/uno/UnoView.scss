@@ -70,6 +70,11 @@
 		grid-area: 2 / 3;
 	}
 
+	.UnoOwnedCards {
+		grid-area: 3 / 2;
+		align-self: end;
+	}
+
 	.PlayCards {
 		grid-area: 2 / 2;
 		display: flex;
@@ -88,12 +93,22 @@
 			left: 50%;
 			transform: translate(-50%, -50%);
 
-			font-size: 150px;
 			text-shadow: 5px 5px 15px #2e0b2e;
 			color: purple;
 			font-family: Quicksand, sans-serif;
 			font-weight: 700;
 			animation: animate-draw-counter 2s cubic-bezier(.37, .03, .34, .98) forwards;
+			font-size: 150px;
+
+			@media (width <= 1500px) {
+				font-size: 130px;
+			}
+			@media (width <= 1000px) {
+				font-size: 100px;
+			}
+			@media (height <= 500px) {
+				font-size: 65px;
+			}
 
 			@keyframes animate-draw-counter {
 				0%, 100% {
@@ -252,9 +267,5 @@
 				}
 			}
 		}
-	}
-
-	.UnoOwnedCards {
-		grid-area: 3 / 2;
 	}
 }

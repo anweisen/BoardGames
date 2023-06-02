@@ -1,4 +1,16 @@
-import {canUseCard, SocketMessageType, UnoCardItem, UnoCardType, UnoColoredTypes, UnoColorType, UnoDirection, UnoSettings, UnoSpecialTypes} from "@board-games/core";
+import {
+  canUseCard,
+  SocketMessageType,
+  UnoCardItem,
+  UnoCardType,
+  UnoColoredTypes,
+  UnoColorType,
+  UnoDirection,
+  UnoSettingDuplicates,
+  UnoSettings,
+  UnoSettingStacking,
+  UnoSpecialTypes
+} from "@board-games/core";
 import {AssertionError} from "assert";
 import {Lobby, Participant, pickRandom, PlayerId, shuffle} from "../models";
 import {GameBase} from "./game";
@@ -20,7 +32,7 @@ const createAllCards = () => {
 
 export class UnoGame extends GameBase {
   static allCards = shuffle(createAllCards());
-  static defaultSettings: UnoSettings = {cards: 7, stacking: 0};
+  static defaultSettings: UnoSettings = {cards: 7, stacking: UnoSettingStacking.SEPARATE, duplicates: UnoSettingDuplicates.ON};
 
   public settings: UnoSettings = UnoGame.defaultSettings;
   private order: PlayerId[] = [];
@@ -118,8 +130,18 @@ export class UnoGame extends GameBase {
     this.topCard = card;
     this.pickedColor = undefined;
 
-    this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, card: card, cards: cards.length}, player);
-    this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards, card: card});
+    let amount = 1;
+    if (this.settings.duplicates === UnoSettingDuplicates.ON && card.type <= UnoCardType.N_9) {
+      for (let i = 0; i < cards.length; i++) {
+        if (cards[i] === card) {
+          cards.splice(i, 1);
+          amount++;
+        }
+      }
+    }
+
+    this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, usedCard: card, usedAmount: amount, left: cards.length}, player);
+    this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards, card: card, amount: amount});
 
     if (cards.length === 0) {
       this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player});
@@ -128,7 +150,7 @@ export class UnoGame extends GameBase {
     }
 
     switch (card.type) {
-      case UnoCardType.DRAW_PICK: // +4
+      case UnoCardType.PICK_DRAW_4: // +4
         this.drawCounter += 4;
         this.broadcastPacket(SocketMessageType.UNO_EFFECT, {drawCounter: this.drawCounter});
       case UnoCardType.PICK:
@@ -145,7 +167,7 @@ export class UnoGame extends GameBase {
         const skipPlayer = this.nextPlayerInDirection();
         this.broadcastPacket(SocketMessageType.UNO_EFFECT, {skipPlayer: skipPlayer});
         break;
-      case UnoCardType.DRAW: // +2
+      case UnoCardType.DRAW_2: // +2
         this.drawCounter += 2;
         this.broadcastPacket(SocketMessageType.UNO_EFFECT, {drawCounter: this.drawCounter});
         break;
@@ -156,8 +178,7 @@ export class UnoGame extends GameBase {
   }
 
   canUseCardNow(card: UnoCardItem): boolean {
-    if (this.drawCounter) return (card.type === UnoCardType.DRAW_PICK || card.type === UnoCardType.DRAW && (this.pickedColor === undefined || this.pickedColor === card.color));
-    return canUseCard(this.pickedColor || this.topCard!!.color, this.topCard!!.type, card);
+    return canUseCard(this.settings, this.pickedColor || this.topCard!!.color, this.topCard!!.type, this.drawCounter, card);
   }
 
   distributeCards(amount: number) {

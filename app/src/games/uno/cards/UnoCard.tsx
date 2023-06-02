@@ -45,9 +45,9 @@ export const UnoCardCore = ({type, color}: { type: UnoCardType, color: UnoColorT
 
     {type === UnoCardType.SKIP && <CardSkip color={fill}/>}
     {type === UnoCardType.REVERSE && <CardReverse color={fill}/>}
-    {type === UnoCardType.DRAW && <CardDraw2 color={fill}/>}
+    {type === UnoCardType.DRAW_2 && <CardDraw2 color={fill}/>}
 
-    {type === UnoCardType.DRAW_PICK && <CardPickDraw color={fill}/>}
+    {type === UnoCardType.PICK_DRAW_4 && <CardPickDraw color={fill}/>}
     {type === UnoCardType.PICK && <CardPick color={fill}/>}
   </>;
 };

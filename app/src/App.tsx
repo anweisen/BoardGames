@@ -1,7 +1,7 @@
 import React, {MutableRefObject, useEffect, useRef, useState} from "react";
 import {BrowserRouter, Navigate, Route, Routes, useParams} from "react-router-dom";
 import {useCookies} from "react-cookie";
-import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType} from "@board-games/core";
+import {GameType, InitLobbyPayload, PlayerInfo, RefuseLobbyPayload, RefuseReason, SocketMessage, SocketMessageType, UnoSettings} from "@board-games/core";
 import Overview from "./lobby/Overview";
 import CreateLobby from "./lobby/CreateLobby";
 import LobbyScreen from "./lobby/LobbyScreen";
@@ -114,7 +114,7 @@ const LobbyContext = () => {
 
   const game = !initPayload ? undefined : (
     initPayload.game === GameType.UNO ?
-      <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} playerName={playerName} setInLobby={setInLobby}/> : undefined
+      <UnoView connection={connectionRef} handler={handlerRef} players={players} selfId={initPayload.playerId} settings={settings as UnoSettings} playerName={playerName} setInLobby={setInLobby}/> : undefined
   );
 
   return (

@@ -22,7 +22,7 @@
 		}
 	}
 
-	$cardWidth: 90px;
+	$cardWidth: max(5.5vh, min(100px, 6vw));
 
 	.Cards {
 		display: flex;
@@ -35,7 +35,7 @@
 		border-radius: 10%;
 
 		&:not(:first-child) {
-			margin-left: $cardWidth*-.75;
+			margin-left: calc($cardWidth * -.75);
 		}
 
 		& {
@@ -51,9 +51,9 @@
 
 			@keyframes draw {
 				from {
-					transform: translateY($cardWidth * -.35);
+					transform: translateY(calc($cardWidth * -.35));
 					opacity: 0;
-					margin-left: -$cardWidth;
+					margin-left: calc($cardWidth * -1);
 				}
 				33% {
 					opacity: 1;
@@ -63,11 +63,11 @@
 	}
 
 	&.Current .Card {
-		box-shadow: 0 0 10px #fbeb41;
+		filter: drop-shadow(0 0 6px #fbeb41);
 	}
 
 	&.Current .Info .Image {
-		box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+		filter: drop-shadow(0 0 10px rgba(0, 0, 0, .5));
 		color: rgba(255, 255, 255, .45);
 
 		svg, img {
@@ -88,7 +88,13 @@
 			background: rgba(0, 0, 0, .15);
 			border: rgba(0, 0, 0, .2) 1px solid;
 			border-radius: 25%;
-			box-shadow: 0 0 1px rgba(0, 0, 0, .5);
+			filter: drop-shadow(0 0 1px rgba(0, 0, 0, .5));
+			margin: 0 auto;
+
+			@media (width <= 1000px) or (height <= 500px) {
+				width: 45px;
+				height: 45px;
+			}
 
 			svg, img {
 				width: 100%;
@@ -102,6 +108,10 @@
 			font-family: 'Poppins', sans-serif;
 			font-weight: 300;
 			text-align: center;
+
+			@media (width <= 1000px) or (height <= 500px) {
+				font-size: 14px;
+			}
 		}
 	}
 }
