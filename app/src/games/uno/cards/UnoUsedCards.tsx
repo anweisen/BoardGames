@@ -27,14 +27,14 @@ const properties = (states: MutableRefObject<Record<number, { }>>, index: number
   if (states.current[index]) return states.current[index];
   const props: CSSProperties = {
     // @ts-ignore
-    "--rotate": randomRotate() + "deg",
-    "--offsetX": randomRotate() + "px",
-    "--offsetY": randomRotate() + "px",
+    "--rotate": random(30) + "deg",
+    "--offsetX": random(25) + "%",
+    "--offsetY": random(15) + "%",
   }
   states.current[index] = props;
   return props
 };
 
-const randomRotate = () => {
-  return Math.random() * 30 - 15;
+const random = (max: number) => {
+  return Math.random() * max - (max / 2);
 };

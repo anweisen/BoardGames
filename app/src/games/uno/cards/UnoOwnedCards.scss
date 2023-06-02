@@ -71,6 +71,16 @@
 
 		&:not(:first-child) {
 			margin-left: -$width*.45; // hide 45%
+
+			@media (width <= 1000px) {
+				margin-left: -$width*.5;
+			}
+			@media (width <= 800px) {
+				margin-left: -$width*.60;
+			}
+			@media (width <= 500px) {
+				margin-left: -$width*.75;
+			}
 		}
 
 		&:hover + .UnoCard {

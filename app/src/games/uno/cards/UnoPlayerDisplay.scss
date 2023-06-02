@@ -2,6 +2,10 @@
 	display: flex;
 	gap: 35px;
 
+	@media (width <= 1000px) or (height <= 500px) {
+		gap: 20px;
+	}
+
 	* {
 		transition: box-shadow .25s;
 	}
@@ -22,7 +26,7 @@
 		}
 	}
 
-	$cardWidth: max(5.5vh, min(100px, 6vw));
+	$cardWidth: max(5.5vh, min(100px, 8vw));
 
 	.Cards {
 		display: flex;
@@ -63,11 +67,11 @@
 	}
 
 	&.Current .Card {
-		filter: drop-shadow(0 0 6px #fbeb41);
+		filter: drop-shadow(0 0 5px #fbeb41);
 	}
 
 	&.Current .Info .Image {
-		filter: drop-shadow(0 0 10px rgba(0, 0, 0, .5));
+		//filter: drop-shadow(0 0 10px rgba(0, 0, 0, .5));
 		color: rgba(255, 255, 255, .45);
 
 		svg, img {
@@ -88,12 +92,16 @@
 			background: rgba(0, 0, 0, .15);
 			border: rgba(0, 0, 0, .2) 1px solid;
 			border-radius: 25%;
-			filter: drop-shadow(0 0 1px rgba(0, 0, 0, .5));
+			//filter: drop-shadow(0 0 1px rgba(0, 0, 0, .5));
 			margin: 0 auto;
 
-			@media (width <= 1000px) or (height <= 500px) {
-				width: 45px;
-				height: 45px;
+			@media (width <= 1000px) or (height <= 700px) {
+				width: 50px;
+				height: 50px;
+			}
+			@media (width <= 500px) or (height <= 500px) {
+				width: 40px;
+				height: 40px;
 			}
 
 			svg, img {

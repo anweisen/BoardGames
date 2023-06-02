@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {MdOutlineDangerous, MdPublic} from "react-icons/md";
+import {MdOutlineDangerous, MdPeople, MdPublic} from "react-icons/md";
 import {LobbyInfo} from "@board-games/core";
 import {ReactComponent as SvgUno} from "../icons/uno/icon-uno.svg";
 import config from "../config";
@@ -63,7 +63,7 @@ const Category = ({title, info, children, count}: { title: string, info?: React.
     </div>
   );
 };
-const GameCard = ({name, color, Svg}:{ name: string, color: string, Svg: React.FunctionComponent }) => {
+const GameCard = ({name, color, Svg}: { name: string, color: string, Svg: React.FunctionComponent }) => {
   return (
     <Link className={"GameCard"} to={`/new/${name}`} style={{background: `var(--${color})`}}>
       {<Svg/>}
@@ -76,6 +76,10 @@ const LobbyCard = ({lobby}: { lobby: LobbyInfo }) => {
       <MdPublic/>
       {/*<MdLock/>*/}
       <div className={"Name"}>{lobby.name}</div>
+      <div className={"Players"}>
+        <MdPeople/>
+        <div>{lobby.players}</div>
+      </div>
     </Link>
   );
 };

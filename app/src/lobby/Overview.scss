@@ -100,6 +100,12 @@
 					grid-area: b;
 				}
 
+				.Players {
+					grid-area: d;
+					display: flex;
+					gap: 5px;
+				}
+
 				animation: spawn-card .45s cubic-bezier(.4, .75, .64, .99);
 
 				@keyframes spawn-card {
@@ -122,6 +128,11 @@
 				border-radius: 15px;
 				width: 125px;
 				filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
+				
+				@media (width <= 1000px) {
+					width: 100px;
+					padding: 8px 12px;
+				}
 				
 				svg {
 					width: 100%;
@@ -184,7 +195,7 @@
 				width: 60px;
 			}
 			@media (max-width: 400px) {
-				width: 55px;
+				width: 50px;
 			}
 		}
 
