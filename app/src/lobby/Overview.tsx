@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {MdOutlineDangerous, MdPeople, MdPublic} from "react-icons/md";
+import {MdLock, MdOutlineDangerous, MdPeople, MdPublic} from "react-icons/md";
 import {LobbyInfo} from "@board-games/core";
 import {ReactComponent as SvgUno} from "../icons/uno/icon-uno.svg";
 import config from "../config";
@@ -73,9 +73,12 @@ const GameCard = ({name, color, Svg}: { name: string, color: string, Svg: React.
 const LobbyCard = ({lobby}: { lobby: LobbyInfo }) => {
   return (
     <Link to={`/${lobby.id}`} className={"LobbyCard"}>
-      <MdPublic/>
+      <div className={"Status"}>
+        <MdPublic/>
+      </div>
       {/*<MdLock/>*/}
       <div className={"Name"}>{lobby.name}</div>
+      <div className={"Game"}><SvgUno/></div>
       <div className={"Players"}>
         <MdPeople/>
         <div>{lobby.players}</div>

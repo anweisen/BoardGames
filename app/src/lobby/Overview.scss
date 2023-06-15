@@ -4,7 +4,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 50px;
-	
+
 	@media (width <= 1000px) {
 		padding: 5dvh 12.5dvw;
 	}
@@ -86,22 +86,33 @@
 				font-size: 18px;
 
 				grid-template-rows: 1fr;
-				grid-template-columns: auto auto 1fr auto;
-				grid-template-areas: "a b c d";
-				column-gap: 10px;
+				grid-template-columns: auto auto 1fr auto 25px auto;
+				grid-template-areas: "icon name _ game __ players";
+				column-gap: 7px;
 
-				svg {
-					grid-area: a;
+				* svg {
 					margin: auto;
 					font-size: 20px;
 				}
 
+				.Status {
+					grid-area: icon;
+					display: flex;
+					color: var(--text-dimmed);
+				}
+
 				.Name {
-					grid-area: b;
+					grid-area: name;
+				}
+
+				.Game {
+					grid-area: game;
+					width: 50px;
+					height: 20px;
 				}
 
 				.Players {
-					grid-area: d;
+					grid-area: players;
 					display: flex;
 					gap: 5px;
 				}
@@ -115,11 +126,11 @@
 					}
 				}
 
-				transition: padding .25s ease, transform .4s ease;
+				transition: padding .25s ease, transform .2s ease;
 
 				&:hover {
-					padding: 10px 30px;
-					//transform: translateY(1px);
+					padding: 10px 25px;
+					//transform: translateY(3px);
 				}
 			}
 
@@ -128,12 +139,12 @@
 				border-radius: 15px;
 				width: 125px;
 				filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.5));
-				
+
 				@media (width <= 1000px) {
 					width: 100px;
 					padding: 8px 12px;
 				}
-				
+
 				svg {
 					width: 100%;
 					height: auto;
@@ -168,7 +179,7 @@
 	}
 
 	.Empty {
-		color: rgba(255, 255, 255, .65);
+		color: var(--text-dimmed);
 		display: flex;
 		gap: 15px;
 
@@ -188,7 +199,7 @@
 		svg {
 			width: 65px;
 			height: auto;
-			color: rgba(255, 255, 255, 0.9);
+			color: var(--svg-dimmed);
 			filter: drop-shadow(1px 1px 5px rgba(0, 0, 0.9));
 
 			@media (max-width: 600px) {

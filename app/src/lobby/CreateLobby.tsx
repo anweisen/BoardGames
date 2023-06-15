@@ -43,7 +43,7 @@ const CreateLobbyPanel = () => {
             if (!playerName || !lobbyName) return;
 
             setClicked(true);
-            setCookie("player_name", playerName, {maxAge: 7 * 24 * 60 * 60});
+            setCookie("player_name", playerName, {maxAge: 30 * 24 * 60 * 60});
             fetch(`${config.api}/gateway/create`, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({lobbyName: lobbyName, game: "uno"})})
               .then(value => value.json())
               .then(value => navigate("/" + value.id))

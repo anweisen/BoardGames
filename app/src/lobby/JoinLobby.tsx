@@ -31,7 +31,7 @@ export default ({join}: { join: (name: string) => void }) => {
             const playerName = document.getElementById("player-name").value;
 
             setClicked(true);
-            setCookie("player_name", playerName, {maxAge:7*24*60*60});
+            setCookie("player_name", playerName, {maxAge: 30 * 24 * 60 * 60});
             join(playerName);
           }}>Join Lobby
           </div>
