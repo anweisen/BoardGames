@@ -31,6 +31,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   const [drawCounter, setDrawCounter] = useState<number>();
   const [pickingColor, setPickingColor] = useState(false);
   const [won, setWon] = useState<string[]>();
+  const [justWon, setJustWon] = useState<string>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     console.log("Initializing UNO..");
@@ -112,6 +113,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
     if (data.end) {
       setWon(data.placement);
     } else {
+      setJustWon(data.player);
     }
   };
 
