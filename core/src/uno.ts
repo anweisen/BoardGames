@@ -40,7 +40,7 @@ export enum UnoDirection {
 export const canUseCard = (settings: UnoSettings, colorBefore: UnoColorType, cardBefore: UnoCardType, drawCounter: number | undefined, cardNow: UnoCardItem): boolean => {
   if (drawCounter) {
     if (settings.stacking === UnoSettingStacking.OFF) return false;
-    if (cardBefore === cardNow.type) return true;
+    if (cardBefore === cardNow.type || cardNow.type === UnoCardType.PICK_DRAW_4) return true;
     if (settings.stacking === UnoSettingStacking.ALL) return colorBefore === cardNow.color && cardNow.type === UnoCardType.DRAW_2;
     return false;
   }

@@ -243,6 +243,77 @@
 			}
 		}
 
+		.Uno {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+
+			text-align: center;
+			font-family: "Poppins", sans-serif;
+			font-size: 45px;
+			white-space: nowrap;
+			color: white;
+			text-shadow: black 0 0 5px;
+
+			background: rgba(0, 0, 0, .2);
+			padding: 20px 45px;
+			border-radius: 50px;
+
+			animation: uno-in .4s 0s ease backwards, uno-out .5s 3s ease forwards;
+
+			@keyframes uno-out {
+				to {
+					opacity: 0;
+					transform: translate(-50%, -50%) scale(0);
+				}
+			}
+			@keyframes uno-in {
+				from {
+					opacity: 0;
+					transform: translate(-50%, -50%) scale(0);
+				}
+			}
+
+			> div {
+				font-weight: 600;
+				display: flex;
+
+				svg {
+					width: 150px;
+					height: auto;
+				}
+			}
+
+			> span {
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+
+				* {
+					margin: auto 0;
+				}
+			}
+
+			.Place {
+				font-size: 30px;
+
+				&._1 {
+					color: var(--gold);
+				}
+				&._2 {
+					color: var(--silver);
+				}
+				&._3 {
+					color: var(--bronze);
+				}
+
+				&::before {
+					content: "#";
+				}
+			}
+		}
+
 		.DirectionArrows {
 			position: absolute;
 			top: 60%;

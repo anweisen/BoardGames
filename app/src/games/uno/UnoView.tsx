@@ -7,6 +7,7 @@ import UnoCardDeck from "./cards/UnoCardDeck";
 import {UnoPlayerDisplayCore, UnoPlayerDisplayWrapperTop} from "./cards/UnoPlayerDisplay";
 import LobbyLoading from "../../lobby/LobbyLoading";
 import {Connection, SocketHandlers} from "../../App";
+import {ReactComponent as SvgUno} from "../../icons/uno/icon-uno.svg";
 import "./UnoView.scss";
 
 export default ({connection, handler, settings, players, selfId, playerName, setInLobby}: {
@@ -31,7 +32,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   const [drawCounter, setDrawCounter] = useState<number>();
   const [pickingColor, setPickingColor] = useState(false);
   const [won, setWon] = useState<string[]>();
-  const [justWon, setJustWon] = useState<string>();
+  const [justWon, setJustWon] = useState<{ player: string, place: number }>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     console.log("Initializing UNO..");
@@ -109,11 +110,12 @@ export default ({connection, handler, settings, players, selfId, playerName, set
       }, 2000);
     }, 250);
   };
-  handler.current[SocketMessageType.UNO_WIN] = (type, data: { player: string, end: boolean, placement?: string[] }) => {
+  handler.current[SocketMessageType.UNO_WIN] = (type, data: { player: string, end: boolean, placement: string[] }) => {
     if (data.end) {
       setWon(data.placement);
     } else {
-      setJustWon(data.player);
+      setJustWon({player: data.player, place: data.placement?.length});
+      setTimeout(() => setJustWon(undefined), 7000);
     }
   };
 
@@ -149,10 +151,18 @@ export default ({connection, handler, settings, players, selfId, playerName, set
             <UnoCardDeck drawCard={drawCard} highlight={selfId === currentPlayer && !ownedCards.some(canUse) && !pickingColor}/>
             {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
               pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
+            {justWon && <div className={"Uno"}>
+              <div><SvgUno/><SvgUno/></div>
+              <span>
+                <div className={"Place _" + justWon.place}>{justWon.place}</div>
+                <div className={"Name"}>{createNameFinder(selfId, playerName!!, players)[justWon.player]}</div>
+              </span>
+            </div>}
           </span>
-          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={selfId === currentPlayer && !pickingColor}/>
+          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} settings={settings} useCard={useCard}
+                         myTurn={selfId === currentPlayer && !pickingColor}/>
         </div>
-        {won && <WinScreen placement={won!!} names={{...Object.fromEntries(players.map(value => [value.id, value.name])), ...Object.fromEntries([[selfId, playerName!!]])}} toLobby={() => setInLobby(true)}/>}
+        {won && <WinScreen placement={won!!} names={createNameFinder(selfId, playerName!!, players)} toLobby={() => setInLobby(true)}/>}
       </>}
     </>
   );
@@ -275,4 +285,8 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
       }/>}
     </>
   );
+};
+
+const createNameFinder = (selfId: string, playerName: string, players: PlayerInfo[]) => {
+  return {...Object.fromEntries(players.map(value => [value.id, value.name])), ...Object.fromEntries([[selfId, playerName!!]])};
 };

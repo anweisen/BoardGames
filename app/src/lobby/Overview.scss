@@ -92,13 +92,16 @@
 				column-gap: 7px;
 
 				* svg {
-					margin: auto;
 					font-size: 20px;
+				}
+
+				* {
+					margin: auto;
+					display: flex;
 				}
 
 				.Status {
 					grid-area: icon;
-					display: flex;
 					color: var(--text-dimmed);
 				}
 
@@ -114,7 +117,6 @@
 
 				.Players {
 					grid-area: players;
-					display: flex;
 					gap: 5px;
 				}
 

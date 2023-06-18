@@ -1,4 +1,4 @@
-import {UnoCardItem, UnoCardType} from "@board-games/core";
+import {UnoCardItem, UnoCardType, UnoSettings} from "@board-games/core";
 import {UnoCardCore} from "./UnoCard";
 import "./UnoOwnedCards.scss";
 
@@ -9,13 +9,14 @@ export default ({cards, canUse, clicked, drawn, useCard, myTurn}: {
   drawn: number | undefined,
   useCard: (index: number) => void,
   myTurn: boolean,
+  settings: UnoSettings,
 }) => {
   return (
     // @ts-ignore
     <div className={"UnoOwnedCards" + (myTurn ? " Current" : "") + (cards.length >= 30 ? " Miniature" : cards.length >= 20 ? " Tiny" : cards.length >= 15 ? " Small" : "")} style={{"--drawn": drawn}}>
-      {cards.map((card, index) => ({...card, index: index}))
+      {cards.map<EditedItem>((card, index) => ({...card, index: index}))
         .sort((a, b) => a.color - b.color || a.type - b.type)
-        .reduce<EditedItem[]>(reduceDuplicates, [])
+        .reduce(reduceDuplicates, [])
         .map((card, index, array) => (
           <div key={`${index}-${card.index}-${card.color}-${card.type}`}
                className={"UnoCard" + (card.index === clicked ? " Fade" : "") + (drawn && card.index >= (array.length - drawn) ? " Drawn Drawn" + (array.length + drawn - 1 - card.index) : "") + (canUse(card) ? " Usable" : "")}

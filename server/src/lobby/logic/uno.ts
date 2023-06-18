@@ -153,7 +153,7 @@ export class UnoGame extends GameBase {
         this.ingame = false;
         return;
       } else {
-        this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player, end: false});
+        this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player, end: false, placement: this.placement});
       }
     }
 
