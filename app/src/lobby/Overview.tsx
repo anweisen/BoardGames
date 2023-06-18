@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
-import {MdLock, MdOutlineDangerous, MdPeople, MdPublic} from "react-icons/md";
+import {MdErrorOutline, MdOutlineDangerous, MdPeople, MdPublic} from "react-icons/md";
 import {LobbyInfo} from "@board-games/core";
 import {ReactComponent as SvgUno} from "../icons/uno/icon-uno.svg";
 import config from "../config";
@@ -10,6 +10,7 @@ export default () => {
   const reloadTime = 3;
   const [reload, setReload] = useState(0);
   const [lobbies, setLobbies] = useState<LobbyInfo[]>();
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -24,25 +25,37 @@ export default () => {
       fetch(`${config.api}/lobbies`, {method: "GET", headers: {"Content-Type": "application/json"}})
         .then(value => value.json())
         .then(value => setLobbies(value))
-        .then(_ => setReload(reloadTime));
+        .then(_ => setReload(reloadTime))
+        .then(_ => setError(false))
+        .catch(_ => setError(true))
+        .catch(_ => setReload(reloadTime))
+      ;
     }
   }, [reload]);
 
   return (
     <div className={"Overview"}>
-      <Category title={"Games"} count={1}>
-        <GameCard name={"uno"} Svg={SvgUno} color={"uno-red"}/>
-      </Category>
-      <Category title={"Lobbies"} info={<div className={"Time"}>{reload}</div>} count={lobbies?.length || 0}>
-        {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
-          <div className={"Empty"}>
-            <MdOutlineDangerous/>
-            <span>
-              <p>There are no waiting Lobbies</p>
-              <p>Why dont you create a <Link to={"/new"}>new Lobby</Link>?</p>
-            </span>
-          </div>}
-      </Category>
+      {error ? <div className={"Error"}>
+        <MdErrorOutline/>
+        <span>
+          <p>Sorry, we couldn't connect to the server</p>
+          <p>Please <a href={"/"}>try again</a> later</p>
+        </span>
+      </div> : <>
+        <Category title={"Games"} count={1}>
+          <GameCard name={"uno"} Svg={SvgUno} color={"uno-red"}/>
+        </Category>
+        <Category title={"Lobbies"} info={<div className={"Time"}>{reload}</div>} count={lobbies?.length || 0}>
+          {lobbies && lobbies.length ? lobbies.map(lobby => <LobbyCard key={lobby.id} lobby={lobby}/>) :
+            <div className={"Empty"}>
+              <MdOutlineDangerous/>
+              <span>
+                <p>There are no waiting Lobbies</p>
+                <p>Why dont you create a <Link to={"/new"}>new Lobby</Link>?</p>
+              </span>
+            </div>}
+        </Category>
+      </>}
     </div>
   );
 }

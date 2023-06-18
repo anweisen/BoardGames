@@ -42,6 +42,7 @@ export class UnoGame extends GameBase {
   private topCard?: UnoCardItem;
   private pickedColor?: UnoColorType;
   private drawCounter: number = 0;
+  private placement: PlayerId[] = [];
 
   constructor(getLobby: () => Lobby) {
     super(getLobby);
@@ -59,13 +60,16 @@ export class UnoGame extends GameBase {
         break;
       case SocketMessageType.REQUEST_START:
         if (this.ingame) return;
-        if (this.order.length < 2) return;
         if (!this.hasPermissions(player)) return;
+        if (Object.values(this.getLobby().participants).length < 2) return;
 
         this.ingame = true;
         this.broadcastPacket(SocketMessageType.PRE_START, {});
 
+        this.placement = [];
+        this.order = [...Object.keys(this.getLobby().participants)];
         shuffle(this.order);
+
         this.topCard = this.pickStartCard();
         this.distributeCards(this.settings.cards);
 
@@ -97,11 +101,7 @@ export class UnoGame extends GameBase {
         if (player !== this.currentPlayer())
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
 
-        if (this.drawCounter) {
-          this.drawCardsWithPackets(player, this.drawCounter);
-        } else {
-          this.drawCardsWithPackets(player, 1);
-        }
+        this.drawCardsWithPackets(player, this.drawCounter || 1);
         break;
       case SocketMessageType.UNO_PICK:
         if (player !== this.currentPlayer())
@@ -115,12 +115,12 @@ export class UnoGame extends GameBase {
   }
 
   handleClose(playerId: PlayerId): void {
-    this.order.splice(this.order.indexOf(playerId), 1);
+    //this.order.splice(this.order.indexOf(playerId), 1);
+    this.cards.delete(playerId);
     this.broadcastPacket(SocketMessageType.LEAVE, {id: playerId});
   }
 
   handleJoin(participant: Participant): void {
-    this.order.push(participant.id);
     this.broadcastPacket(SocketMessageType.JOIN, {id: participant.id, name: participant.name}, participant.id);
   }
 
@@ -144,15 +144,24 @@ export class UnoGame extends GameBase {
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards, card: card, amount: amount});
 
     if (cards.length === 0) {
-      this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player});
-      this.ingame = false;
-      return;
+      this.placement.push(player);
+      this.cards.delete(player);
+
+      if (this.cards.size === 1) {
+        this.placement.push(Array.from(this.cards.keys())[0]);
+        this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player, end: true, placement: this.placement});
+        this.ingame = false;
+        return;
+      } else {
+        this.broadcastPacket(SocketMessageType.UNO_WIN, {player: player, end: false});
+      }
     }
 
     switch (card.type) {
       case UnoCardType.PICK_DRAW_4: // +4
         this.drawCounter += 4;
         this.broadcastPacket(SocketMessageType.UNO_EFFECT, {drawCounter: this.drawCounter});
+        return;
       case UnoCardType.PICK:
         return;
 
@@ -217,12 +226,18 @@ export class UnoGame extends GameBase {
     throw new AssertionError();
   }
 
-  nextPlayerInDirection(): PlayerId {
+  nextPlayerInDirection(iteration: number = 0): PlayerId {
+    if (iteration > 100) throw new AssertionError();
+
     if (this.direction === UnoDirection.CLOCKWISE) this.current++;
     else this.current--;
 
     if (this.current >= this.order.length) this.current = 0;
     if (this.current < 0) this.current = this.order.length - 1;
+
+    if (!this.cards.has(this.order[this.current]))
+      return this.nextPlayerInDirection(iteration + 1);
+
     return this.order[this.current];
   }
 

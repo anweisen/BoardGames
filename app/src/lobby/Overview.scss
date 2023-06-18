@@ -38,6 +38,7 @@
 					&::before {
 						content: "(";
 					}
+
 					&::after {
 						content: ")";
 					}
@@ -150,6 +151,7 @@
 					height: auto;
 					transition: transform .2s ease;
 				}
+
 				&:hover svg {
 					transform: scale(1.05);
 				}
@@ -178,10 +180,26 @@
 
 	}
 
-	.Empty {
+	&:has(.Error) {
+		height: 100%;
+		width: 100%;
+		display: grid;
+		place-items: center;
+		box-sizing: border-box;
+	}
+
+	.Empty, .Error {
 		color: var(--text-dimmed);
 		display: flex;
 		gap: 15px;
+
+		&.Error {
+			flex-direction: column;
+			text-align: center;
+			svg {
+				margin: auto;
+			}
+		}
 
 		@media (max-width: 400px) {
 			gap: 8px;

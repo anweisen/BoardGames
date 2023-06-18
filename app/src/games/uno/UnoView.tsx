@@ -30,7 +30,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   const [effectPayload, setEffectPayload] = useState<UnoEffectPayload>();
   const [drawCounter, setDrawCounter] = useState<number>();
   const [pickingColor, setPickingColor] = useState(false);
-  const [won, setWon] = useState<string>();
+  const [won, setWon] = useState<string[]>();
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     console.log("Initializing UNO..");
@@ -108,8 +108,11 @@ export default ({connection, handler, settings, players, selfId, playerName, set
       }, 2000);
     }, 250);
   };
-  handler.current[SocketMessageType.UNO_WIN] = (type, data: { player: string }) => {
-    setWon(data.player);
+  handler.current[SocketMessageType.UNO_WIN] = (type, data: { player: string, end: boolean, placement?: string[] }) => {
+    if (data.end) {
+      setWon(data.placement);
+    } else {
+    }
   };
 
   const drawCard = () => {
@@ -147,7 +150,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
           </span>
           <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} useCard={useCard} myTurn={selfId === currentPlayer && !pickingColor}/>
         </div>
-        {won && <WinScreen name={won === selfId ? playerName : Object.fromEntries(players.map(value => [value.id, value.name]))[won]} toLobby={() => setInLobby(true)}/>}
+        {won && <WinScreen placement={won!!} names={{...Object.fromEntries(players.map(value => [value.id, value.name])), ...Object.fromEntries([[selfId, playerName!!]])}} toLobby={() => setInLobby(true)}/>}
       </>}
     </>
   );
@@ -184,7 +187,7 @@ const DirectionArrows = ({direction}: { direction: UnoDirection }) => {
   );
 };
 
-const WinScreen = ({name, toLobby}: { name?: string, toLobby: () => void }) => {
+const WinScreen = ({placement, names, toLobby}: { placement: string[], names: Record<string, string>, toLobby: () => void }) => {
   const [timer, setTimer] = useState(15);
 
   useEffect(() => {
@@ -201,7 +204,12 @@ const WinScreen = ({name, toLobby}: { name?: string, toLobby: () => void }) => {
   return (
     <span className={"UnoWinner"}>
       <FaCrown/>
-      <p className={"Text"}>{name} won</p>
+      <p className={"Placement"}>
+        {placement.map((playerId, index) => <div className={"Place _" + (index + 1)}>
+          <div className={"Number"}>{index + 1}</div>
+          <div className={"Name"}>{names[playerId]}</div>
+        </div>)}
+      </p>
       <div className={"Button"} onClick={toLobby}>Ready {timer < 10 ? "0" + timer : timer}s</div>
     </span>
   );
@@ -241,9 +249,11 @@ const UnoPlayerDisplays = ({init, selfId, currentPlayer, players, order, othersC
   const selfOrderIndex = order.indexOf(selfId); // = number of players before self
   const shiftedOrder: string[] = [];
   for (let i = selfOrderIndex + 1; i < order.length; i++) {
+    if (othersCardAmount[order[i]] === 0) continue;
     shiftedOrder.push(order[i]);
   }
   for (let i = 0; i < selfOrderIndex; i++) {
+    if (othersCardAmount[order[i]] === 0) continue;
     shiftedOrder.push(order[i]);
   }
 

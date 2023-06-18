@@ -21,9 +21,34 @@
 		font-size: 150px;
 	}
 
-	p {
-		font-size: 40px;
+	.Placement {
+		font-size: 28px;
 		font-family: "Poppins", sans-serif;
+
+		.Place {
+			&._1 .Number {
+				color: var(--gold);
+			}
+			&._2 .Number {
+				color: var(--silver);
+			}
+			&._3 .Number {
+				color: var(--bronze);
+			}
+
+			display: flex;
+			gap: 8px;
+
+			.Number {
+				font-weight: 400;
+				&::before {
+					content: "#";
+				}
+			}
+			.Name {
+				font-weight: 300;
+			}
+		}
 	}
 
 	.Button {
