@@ -1,5 +1,17 @@
 import React, {MutableRefObject, useCallback, useEffect, useState} from "react";
-import {canUseCard, PlayerInfo, SocketMessageType, UnoCardItem, UnoCardType, UnoColorType, UnoDirection, UnoEffectPayload, UnoInitPayload, UnoSettings} from "@board-games/core";
+import {
+  canUseCard,
+  PlayerInfo,
+  SocketMessageType,
+  UnoCardItem,
+  UnoCardType,
+  UnoColorType,
+  UnoDirection,
+  UnoEffectPayload,
+  UnoInitPayload,
+  UnoSettingDuplicates,
+  UnoSettings
+} from "@board-games/core";
 import {FaCrown} from "react-icons/fa";
 import UnoOwnedCards from "./cards/UnoOwnedCards";
 import UnoUsedCards from "./cards/UnoUsedCards";
@@ -24,6 +36,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   const [ownedCards, setOwnedCards] = useState<UnoCardItem[]>([]);
   const [clickedCard, setClickedCard] = useState<{ time: number, index: number, card?: UnoCardItem }>();
   const [drawnCard, setDrawnCard] = useState<{ amount: number }>();
+  const [drawingCard, setDrawingCard] = useState(false);
   const [order, setOrder] = useState<string[]>();
   const [othersCardAmount, setOthersCardAmount] = useState<Record<string, number>>();
   const [direction, setDirection] = useState<UnoDirection>();
@@ -33,6 +46,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   const [pickingColor, setPickingColor] = useState(false);
   const [won, setWon] = useState<string[]>();
   const [justWon, setJustWon] = useState<{ player: string, place: number }>();
+  const [announcedUno, setAnnouncedUno] = useState(false);
 
   handler.current[SocketMessageType.INIT_GAME] = (type, data: UnoInitPayload) => {
     console.log("Initializing UNO..");
@@ -58,8 +72,8 @@ export default ({connection, handler, settings, players, selfId, playerName, set
   };
   handler.current[SocketMessageType.UNO_CONFIRM_DRAW] = (type, data: { cards: UnoCardItem[] }) => {
     setDrawCounter(undefined); // the amount of cards which have to be drawn next time, reset -> other than +2/+4 cards can be used
-    setClickedCard(undefined); // reset clicked card to allow client to click new card
     setDrawnCard({amount: data.cards.length});
+    setDrawingCard(false);
     setOwnedCards(prev => [...prev, ...data.cards]);
     setTimeout(() => {
       setDrawnCard(undefined);
@@ -107,7 +121,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
       setEffectPayload(data);
       setTimeout(() => {
         setEffectPayload(undefined);
-      }, 2000);
+      }, 4000);
     }, 250);
   };
   handler.current[SocketMessageType.UNO_WIN] = (type, data: { player: string, end: boolean, placement: string[] }) => {
@@ -123,17 +137,25 @@ export default ({connection, handler, settings, players, selfId, playerName, set
     if (selfId !== currentPlayer) return;
     if (clickedCard !== undefined) return;
     if (drawnCard !== undefined) return;
-    setClickedCard({time: Date.now(), index: -1, card: undefined});
+    if (drawingCard) return;
+    if (pickingColor) return;
+    setDrawingCard(true);
     connection.current.sendPacket(SocketMessageType.UNO_DRAW, {});
   };
   const useCard = (index: number) => {
     if (selfId !== currentPlayer) return;
     if (clickedCard !== undefined) return;
+    if (drawingCard) return;
     setClickedCard({time: Date.now(), index: index, card: ownedCards[index]});
     connection.current.sendPacket(SocketMessageType.UNO_USE, {cardIndex: index});
   };
   const pickColor = (color: UnoColorType) => {
     connection.current.sendPacket(SocketMessageType.UNO_PICK, {color: color});
+  };
+  const announceUno = () => {
+    if (announcedUno) return;
+    connection.current.sendPacket(SocketMessageType.UNO_UNO, {});
+    setAnnouncedUno(true);
   };
   const canUse = useCallback((card: UnoCardItem) => {
     const top = usedCards[usedCards.length - 1];
@@ -149,24 +171,55 @@ export default ({connection, handler, settings, players, selfId, playerName, set
             <DirectionArrows direction={direction}/>
             <UnoUsedCards cards={usedCards} usedCardsCounter={usedCardsCounter}/>
             <UnoCardDeck drawCard={drawCard} highlight={selfId === currentPlayer && !ownedCards.some(canUse) && !pickingColor}/>
-            {effectPayload?.drawCounter ? <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span> :
-              pickingColor ? <PickColor pickColor={pickColor}/> : <></>}
-            {justWon && <div className={"Uno"}>
-              <div><SvgUno/><SvgUno/></div>
-              <span>
-                <div className={"Place _" + justWon.place}>{justWon.place}</div>
-                <div className={"Name"}>{createNameFinder(selfId, playerName!!, players)[justWon.player]}</div>
-              </span>
-            </div>}
+
+            {effectPayload?.unoPlayer && <UnoDisplay player={effectPayload?.unoPlayer} players={players} playerName={playerName!!} selfId={selfId}/>}
+            {effectPayload?.drawCounter && <span className={"DrawCounter"}>+{effectPayload.drawCounter}</span>}
+            {pickingColor && <PickColor pickColor={pickColor}/>}
+            {justWon && <UnoDisplay place={justWon.place} player={justWon.player} players={players} playerName={playerName!!} selfId={selfId}/>}
           </span>
-          <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} settings={settings} useCard={useCard}
-                         myTurn={selfId === currentPlayer && !pickingColor}/>
+          <div className={"UnoHand"}>
+            <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} settings={settings} useCard={useCard}
+                           myTurn={selfId === currentPlayer && !pickingColor}/>
+            {ownedCards.length <= 4 && <UnoButton usable={selfId === currentPlayer && !pickingColor && ownedCards.length - countDuplicates(ownedCards, settings) === 2 && !announcedUno} click={announceUno}/>}
+          </div>
         </div>
         {won && <WinScreen placement={won!!} names={createNameFinder(selfId, playerName!!, players)} toLobby={() => setInLobby(true)}/>}
       </>}
     </>
   );
 };
+
+const countDuplicates = (cards: UnoCardItem[], settings: UnoSettings) => {
+  if (settings.duplicates !== UnoSettingDuplicates.ON) return 0;
+  let duplicates = 0;
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].type > UnoCardType.N_9) continue;
+
+    for (let j = i + 1; j < cards.length; j++) {
+      if (cards[i] === cards[j]) {
+        duplicates++;
+        break;
+      }
+    }
+  }
+  return duplicates;
+};
+
+const UnoDisplay = ({place, player, selfId, playerName, players}: { place?: number, player: string, playerName: string, selfId: string, players: PlayerInfo[] }) => (
+  <div className={"Uno"}>
+    <div><SvgUno/>{place && <SvgUno/>}</div>
+    <span>
+      {place && <div className={"Place _" + place}>{place}</div>}
+      <div className={"Name"}>{createNameFinder(selfId, playerName!!, players)[player]}</div>
+    </span>
+  </div>
+);
+
+const UnoButton = ({usable, click}: { usable: boolean, click: () => void }) => (
+  <div className={"UnoButton" + (usable ? " Usable" : "")} onClick={usable ? click : undefined}>
+    <SvgUno/>
+  </div>
+);
 
 const DirectionArrows = ({direction}: { direction: UnoDirection }) => {
   return (
@@ -216,12 +269,12 @@ const WinScreen = ({placement, names, toLobby}: { placement: string[], names: Re
   return (
     <span className={"UnoWinner"}>
       <FaCrown/>
-      <p className={"Placement"}>
-        {placement.map((playerId, index) => <div className={"Place _" + (index + 1)}>
+      <div className={"Placement"}>
+        {placement.map((playerId, index) => <div key={index} className={"Place _" + (index + 1)}>
           <div className={"Number"}>{index + 1}</div>
           <div className={"Name"}>{names[playerId]}</div>
         </div>)}
-      </p>
+      </div>
       <div className={"Button"} onClick={toLobby}>Ready {timer < 10 ? "0" + timer : timer}s</div>
     </span>
   );

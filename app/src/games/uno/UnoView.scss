@@ -29,9 +29,11 @@
 			&._1 .Number {
 				color: var(--gold);
 			}
+
 			&._2 .Number {
 				color: var(--silver);
 			}
+
 			&._3 .Number {
 				color: var(--bronze);
 			}
@@ -41,10 +43,12 @@
 
 			.Number {
 				font-weight: 500;
+
 				&::before {
 					content: "#";
 				}
 			}
+
 			.Name {
 				font-weight: 300;
 			}
@@ -95,9 +99,51 @@
 		grid-area: 2 / 3;
 	}
 
-	.UnoOwnedCards {
+	.UnoHand {
 		grid-area: 3 / 2;
-		align-self: end;
+		align-self: end; // vertical -> bottom
+
+		display: flex;
+		position: relative;
+
+		.UnoButton {
+			position: absolute;
+			left: calc(100% + 15px);
+
+			background: var(--uno-red);
+			padding: 1.5vh 1.2vh;
+			border-radius: 50%;
+			align-self: center;
+
+			box-shadow: rgba(0, 0, 0, .6) 0 0 8px;
+			transition: transform .25s ease;
+			animation: uno-button-spawn .5s ease;
+
+			@keyframes uno-button-spawn {
+				from {
+					opacity: 0;
+					transform: scale(0);
+				}
+			}
+
+			&:hover {
+				transform: scale(1.02);
+
+				svg {
+					transform: scale(1.05);
+				}
+			}
+
+			&:not(.Usable) {
+				filter: brightness(50%);
+			}
+
+			svg {
+				transition: transform .3s ease;
+				width: auto;
+				height: 6.5dvh;;
+			}
+		}
 	}
 
 	.PlayCards {
@@ -248,6 +294,7 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
+			z-index: 200;
 
 			text-align: center;
 			font-family: "Poppins", sans-serif;
@@ -301,9 +348,11 @@
 				&._1 {
 					color: var(--gold);
 				}
+
 				&._2 {
 					color: var(--silver);
 				}
+
 				&._3 {
 					color: var(--bronze);
 				}
@@ -364,4 +413,5 @@
 			}
 		}
 	}
+
 }

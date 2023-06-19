@@ -39,6 +39,7 @@ export class UnoGame extends GameBase {
   private cards: Map<PlayerId, UnoCardItem[]> = new Map();
   private direction: UnoDirection = UnoDirection.CLOCKWISE;
   private current: number = 0;
+  private announcedUno: boolean = false;
   private topCard?: UnoCardItem;
   private pickedColor?: UnoColorType;
   private drawCounter: number = 0;
@@ -110,7 +111,35 @@ export class UnoGame extends GameBase {
         this.pickedColor = data.color as UnoColorType;
         this.broadcastPacket(SocketMessageType.UNO_PICK, {player: player, color: this.pickedColor});
         this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: this.nextPlayerInDirection()});
-        return;
+        break;
+      case SocketMessageType.UNO_UNO:
+        if (player !== this.currentPlayer())
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
+
+        let duplicates = 0;
+        const cards = this.cards.get(player)!!;
+        if (this.settings.duplicates === UnoSettingDuplicates.ON) {
+          for (let i = 0; i < cards.length; i++) {
+            if (cards[i].type > UnoCardType.N_9) continue;
+
+            for (let j = i + 1; j < cards.length; j++) {
+              if (cards[i] === cards[j]) {
+                duplicates++;
+                break;
+              }
+            }
+          }
+        }
+        console.log(duplicates);
+
+        if (cards.length - duplicates !== 2)
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
+        if (this.announcedUno)
+          return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
+
+        this.announcedUno = true;
+        this.broadcastPacket(SocketMessageType.UNO_EFFECT, {unoPlayer: player});
+        break;
     }
   }
 
@@ -125,7 +154,7 @@ export class UnoGame extends GameBase {
   }
 
   useCard(cardIndex: number, card: UnoCardItem, player: PlayerId) {
-    const cards = this.cards.get(player)!!;
+    let cards = this.cards.get(player)!!;
     cards.splice(cardIndex, 1);
     this.topCard = card;
     this.pickedColor = undefined;
@@ -139,6 +168,12 @@ export class UnoGame extends GameBase {
         }
       }
     }
+
+    if (cards.length === 1 && !this.announcedUno) {
+      this.drawCardsWithPackets(player, 2, false);
+      cards = this.cards.get(player)!!;
+    }
+    this.announcedUno = false;
 
     this.broadcastPacket(SocketMessageType.UNO_USE, {player: player, usedCard: card, usedAmount: amount, left: cards.length}, player);
     this.sendPacket(player, SocketMessageType.UNO_CONFIRM, {cards: cards, card: card, amount: amount});
@@ -200,7 +235,7 @@ export class UnoGame extends GameBase {
     }
   }
 
-  drawCardsWithPackets(player: PlayerId, amount: number) {
+  drawCardsWithPackets(player: PlayerId, amount: number, moveOn: boolean = true) {
     const cards: UnoCardItem[] = [];
     for (let i = 0; i < amount; i++) {
       cards.push(pickRandom(UnoGame.allCards));
@@ -211,7 +246,7 @@ export class UnoGame extends GameBase {
     this.broadcastPacket(SocketMessageType.UNO_DRAW, {player: player, amount: amount}, player);
 
     this.drawCounter = 0;
-    if (!totalCards.some(card => this.canUseCardNow(card))) {
+    if (moveOn && !totalCards.some(card => this.canUseCardNow(card))) {
       const nextPlayer = this.nextPlayerInDirection();
       this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
     }

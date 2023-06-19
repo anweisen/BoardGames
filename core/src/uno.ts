@@ -74,5 +74,6 @@ export enum UnoSettingDuplicates {
 export interface UnoEffectPayload {
   changeDirection?: UnoDirection;
   skipPlayer?: string;
+  unoPlayer?: string;
   drawCounter?: number;
 }
