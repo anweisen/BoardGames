@@ -80,6 +80,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
     }, 1000);
   };
   handler.current[SocketMessageType.UNO_CONFIRM] = (type, data: { cards: UnoCardItem[], card: UnoCardItem, amount: number }) => {
+    setAnnouncedUno(false);
     const age = Date.now() - clickedCard!!.time;
 
     setTimeout(() => {
@@ -180,7 +181,7 @@ export default ({connection, handler, settings, players, selfId, playerName, set
           <div className={"UnoHand"}>
             <UnoOwnedCards cards={ownedCards} canUse={canUse} clicked={clickedCard?.index} drawn={drawnCard?.amount} settings={settings} useCard={useCard}
                            myTurn={selfId === currentPlayer && !pickingColor}/>
-            {ownedCards.length <= 4 && <UnoButton usable={selfId === currentPlayer && !pickingColor && ownedCards.length - countDuplicates(ownedCards, settings) === 2 && !announcedUno} click={announceUno}/>}
+            {ownedCards.length && ownedCards.length <= 4 && <UnoButton usable={selfId === currentPlayer && !pickingColor && (ownedCards.length - countDuplicates(ownedCards, settings)) === 2 && !announcedUno} click={announceUno}/>}
           </div>
         </div>
         {won && <WinScreen placement={won!!} names={createNameFinder(selfId, playerName!!, players)} toLobby={() => setInLobby(true)}/>}

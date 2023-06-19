@@ -16,5 +16,9 @@ export default ({permissions, settings, setSettings}: { permissions: boolean, se
       <SettingSwitch permissions={permissions} values={{1: "On", 0: "Off"}} defaultValue={settings.duplicates}
                      updateValue={value => setSettings({...settings, duplicates: value})}/>
     </SettingsGroup>
+    <SettingsGroup label={"Draw Cards"}>
+      <SettingSwitch permissions={permissions} values={{1: "Forever", 0: "Once"}} defaultValue={settings.draw}
+                     updateValue={value => setSettings({...settings, draw: value})}/>
+    </SettingsGroup>
   </>
 )

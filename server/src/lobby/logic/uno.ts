@@ -6,6 +6,7 @@ import {
   UnoColoredTypes,
   UnoColorType,
   UnoDirection,
+  UnoSettingDraw,
   UnoSettingDuplicates,
   UnoSettings,
   UnoSettingStacking,
@@ -32,7 +33,7 @@ const createAllCards = () => {
 
 export class UnoGame extends GameBase {
   static allCards = shuffle(createAllCards());
-  static defaultSettings: UnoSettings = {cards: 7, stacking: UnoSettingStacking.SEPARATE, duplicates: UnoSettingDuplicates.ON};
+  static defaultSettings: UnoSettings = {cards: 7, stacking: UnoSettingStacking.SEPARATE, duplicates: UnoSettingDuplicates.ON, draw: UnoSettingDraw.ONCE};
 
   public settings: UnoSettings = UnoGame.defaultSettings;
   private order: PlayerId[] = [];
@@ -130,7 +131,6 @@ export class UnoGame extends GameBase {
             }
           }
         }
-        console.log(duplicates);
 
         if (cards.length - duplicates !== 2)
           return this.sendPacket(player, SocketMessageType.UNO_REFUSE, {});
@@ -247,8 +247,12 @@ export class UnoGame extends GameBase {
 
     this.drawCounter = 0;
     if (moveOn && !totalCards.some(card => this.canUseCardNow(card))) {
-      const nextPlayer = this.nextPlayerInDirection();
-      this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
+      if (this.settings.draw === UnoSettingDraw.ONCE) {
+        const nextPlayer = this.nextPlayerInDirection();
+        this.broadcastPacket(SocketMessageType.UNO_NEXT, {player: nextPlayer});
+      } else if (this.settings.draw === UnoSettingDraw.FOREVER) {
+        this.drawCardsWithPackets(player, 1, moveOn);
+      }
     }
   }
 

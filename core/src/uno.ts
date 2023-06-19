@@ -58,6 +58,7 @@ export interface UnoSettings {
   cards: number;
   stacking: UnoSettingStacking;
   duplicates: UnoSettingDuplicates;
+  draw: UnoSettingDraw;
 }
 
 export enum UnoSettingStacking {
@@ -69,6 +70,10 @@ export enum UnoSettingStacking {
 export enum UnoSettingDuplicates {
   OFF,
   ON,
+}
+export enum UnoSettingDraw {
+  ONCE,
+  FOREVER,
 }
 
 export interface UnoEffectPayload {

@@ -69,6 +69,9 @@
 	&.Current .Card {
 		filter: drop-shadow(0 0 5px #fbeb41);
 	}
+	&:not(.Current) {
+		filter: brightness(40%);
+	}
 
 	&.Current .Info .Image {
 		//filter: drop-shadow(0 0 10px rgba(0, 0, 0, .5));
